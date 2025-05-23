@@ -1159,7 +1159,7 @@
         language: "Dil",
         passwordsGenerated: "Oluşturulan şifre sayısı:",
         lastGenerated: "Son oluşturulma:",
-        strongPasswordTitle: "Güçlü bir şifre ne yapar?",
+        strongPasswordTitle: "Bir şifreyi ne güçlü yapar?",
         long: "Uzun",
         longDesc: "En az 12 karakter kullanın. Daha uzun şifreler kırılması üstel olarak daha zordur.",
         complex: "Karmaşık",
@@ -1207,21 +1207,13 @@
         const response = await fetch('/api/stats');
         if (!response.ok) throw new Error('Failed to fetch stats');
         const data = await response.json();
-        // Only update if we have valid data
-        if (data && typeof data.count === 'number') {
+        if (data) {
           passwordCount = data.count;
           lastGenerated = data.lastGenerated;
           updateStatsDisplay();
         }
       } catch (error) {
         console.error('Error fetching stats:', error);
-        // If fetch fails, try to load from localStorage as fallback
-        const savedCount = localStorage.getItem('pwdgen-count');
-        if (savedCount) {
-          passwordCount = parseInt(savedCount, 10);
-          lastGenerated = localStorage.getItem('pwdgen-last');
-          updateStatsDisplay();
-        }
       }
     }
 
@@ -1239,25 +1231,20 @@
     }
 
     async function updateStats() {
-      // Update display first
-      updateStatsDisplay();
-      
-      // Save to localStorage as backup
-      localStorage.setItem('pwdgen-count', passwordCount.toString());
-      localStorage.setItem('pwdgen-last', lastGenerated);
-      
-      // Update server
       try {
-        await fetch('/api/stats', {
+        const response = await fetch('/api/stats', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            count: passwordCount,
-            lastGenerated: lastGenerated
-          })
+          }
         });
+        
+        if (!response.ok) throw new Error('Failed to update stats');
+        const data = await response.json();
+        if (data.success) {
+          passwordCount = data.count;
+          updateStatsDisplay();
+        }
       } catch (error) {
         console.error('Error updating stats:', error);
       }
@@ -1281,9 +1268,7 @@
           passwordGroup.classList.remove('fallback-active');
         }
         updateStrengthMeter(passwordEl.value, opts);
-        passwordCount++;
-        lastGenerated = nowTimeString();
-        updateStats();
+        updateStats(); // This will increment the server-side counter
         updateCopyButton();
         attachCopyHandler();
       }
