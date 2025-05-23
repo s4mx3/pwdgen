@@ -1196,11 +1196,83 @@
     const toast = $("toast");
 
     // --- State ---
-    let passwordCount = parseInt(localStorage.getItem('pwdgen-count') || '0', 10);
-    let lastGenerated = localStorage.getItem('pwdgen-last') || null;
+    let passwordCount = 0;
+    let lastGenerated = null;
     let currentLang = localStorage.getItem('pwdgen-lang') || 'en';
     let copyTimeout = null;
     let isInitialized = false;
+
+    async function fetchStats() {
+      try {
+        const response = await fetch('/api/stats');
+        if (!response.ok) throw new Error('Failed to fetch stats');
+        const data = await response.json();
+        passwordCount = data.count;
+        lastGenerated = data.lastGenerated;
+        updateStats();
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
+    }
+
+    async function updateStats() {
+      const counterEl = document.getElementById('counter');
+      const lastTimeEl = document.getElementById('last-time');
+      
+      if (counterEl) {
+        counterEl.textContent = passwordCount;
+      }
+      
+      if (lastTimeEl) {
+        lastTimeEl.textContent = lastGenerated || "—";
+      }
+      
+      // Update server
+      try {
+        await fetch('/api/stats', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            count: passwordCount,
+            lastGenerated: lastGenerated
+          })
+        });
+      } catch (error) {
+        console.error('Error updating stats:', error);
+      }
+    }
+
+    function doGenerate() {
+      const passwordGroup = document.querySelector('.password-group');
+      passwordGroup.classList.add('generating');
+      
+      const length = parseInt(lengthSlider.value, 10);
+      const opts = getOptions();
+      if (!opts.lower && !opts.upper && !opts.number && !opts.symbol) {
+        showNoOptionsState();
+      } else {
+        passwordEl.value = generatePassword(length, opts);
+        passwordEl.placeholder = '';
+        if (placeholderFallback) {
+          placeholderFallback.style.display = 'none';
+        }
+        if (passwordGroup) {
+          passwordGroup.classList.remove('fallback-active');
+        }
+        updateStrengthMeter(passwordEl.value, opts);
+        passwordCount++;
+        lastGenerated = nowTimeString();
+        updateStats();
+        updateCopyButton();
+        attachCopyHandler();
+      }
+      
+      setTimeout(() => {
+        passwordGroup.classList.remove('generating');
+      }, 300);
+    }
 
     // --- User preferences ---
     const defaultPreferences = {
@@ -1436,40 +1508,6 @@
       }
     }
 
-    function updateStats() {
-      const counterEl = document.getElementById('counter');
-      const lastTimeEl = document.getElementById('last-time');
-      
-      console.log('Updating stats:', { passwordCount, lastGenerated });
-      console.log('Found elements:', { 
-        counter: !!counterEl, 
-        lastTime: !!lastTimeEl 
-      });
-      
-      if (counterEl) {
-        counterEl.textContent = passwordCount;
-        console.log('Updated counter:', passwordCount);
-      } else {
-        console.warn('Counter element not found');
-      }
-      
-      if (lastTimeEl) {
-        lastTimeEl.textContent = lastGenerated || "—";
-        console.log('Updated last time:', lastGenerated);
-      } else {
-        console.warn('Last time element not found');
-      }
-      
-      // Save to localStorage
-      try {
-        localStorage.setItem('pwdgen-count', passwordCount.toString());
-        localStorage.setItem('pwdgen-last', lastGenerated);
-        console.log('Stats saved to localStorage');
-      } catch (e) {
-        console.warn('Failed to save to localStorage:', e);
-      }
-    }
-
     function showNoOptionsState() {
       passwordEl.value = '';
       passwordEl.placeholder = '';
@@ -1512,36 +1550,6 @@
       }
     }
 
-    function doGenerate() {
-      const passwordGroup = document.querySelector('.password-group');
-      passwordGroup.classList.add('generating');
-      
-      const length = parseInt(lengthSlider.value, 10);
-      const opts = getOptions();
-      if (!opts.lower && !opts.upper && !opts.number && !opts.symbol) {
-        showNoOptionsState();
-      } else {
-        passwordEl.value = generatePassword(length, opts);
-        passwordEl.placeholder = '';
-        if (placeholderFallback) {
-          placeholderFallback.style.display = 'none';
-        }
-        if (passwordGroup) {
-          passwordGroup.classList.remove('fallback-active');
-        }
-        updateStrengthMeter(passwordEl.value, opts);
-        passwordCount++;
-        lastGenerated = nowTimeString();
-        updateStats();
-        updateCopyButton();
-        attachCopyHandler();
-      }
-      
-      setTimeout(() => {
-        passwordGroup.classList.remove('generating');
-      }, 300);
-    }
-
     function updateCopyButton() {
       const copyBtnCurrent = document.getElementById('copy-btn');
       if (passwordEl.value && passwordEl.value.length > 0) {
@@ -1573,17 +1581,12 @@
     }
 
     // --- Initialization ---
-    function init() {
+    async function init() {
       if (isInitialized) return;
       
-      // Load saved stats
-      try {
-        const savedCount = localStorage.getItem('pwdgen-count');
-        const savedLast = localStorage.getItem('pwdgen-last');
-        if (savedCount) passwordCount = parseInt(savedCount, 10);
-        if (savedLast) lastGenerated = savedLast;
-      } catch (e) {}
-
+      // Load stats from server
+      await fetchStats();
+      
       // Set up toggle buttons
       const toggleButtons = [
         { id: 'lowercase', el: lowercaseEl },
@@ -1682,7 +1685,6 @@
       }
 
       // Update UI
-      updateStats();
       updateI18n();
       
       // Generate initial password
