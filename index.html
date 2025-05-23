@@ -1207,15 +1207,25 @@
         const response = await fetch('/api/stats');
         if (!response.ok) throw new Error('Failed to fetch stats');
         const data = await response.json();
-        passwordCount = data.count;
-        lastGenerated = data.lastGenerated;
-        updateStats();
+        // Only update if we have valid data
+        if (data && typeof data.count === 'number') {
+          passwordCount = data.count;
+          lastGenerated = data.lastGenerated;
+          updateStatsDisplay();
+        }
       } catch (error) {
         console.error('Error fetching stats:', error);
+        // If fetch fails, try to load from localStorage as fallback
+        const savedCount = localStorage.getItem('pwdgen-count');
+        if (savedCount) {
+          passwordCount = parseInt(savedCount, 10);
+          lastGenerated = localStorage.getItem('pwdgen-last');
+          updateStatsDisplay();
+        }
       }
     }
 
-    async function updateStats() {
+    function updateStatsDisplay() {
       const counterEl = document.getElementById('counter');
       const lastTimeEl = document.getElementById('last-time');
       
@@ -1226,6 +1236,15 @@
       if (lastTimeEl) {
         lastTimeEl.textContent = lastGenerated || "—";
       }
+    }
+
+    async function updateStats() {
+      // Update display first
+      updateStatsDisplay();
+      
+      // Save to localStorage as backup
+      localStorage.setItem('pwdgen-count', passwordCount.toString());
+      localStorage.setItem('pwdgen-last', lastGenerated);
       
       // Update server
       try {
