@@ -1,17 +1,34 @@
 // Vercel serverless function for handling password generation stats
-import { createClient } from '@vercel/kv';
 
-// Initialize KV client
-const kv = createClient({
-  url: process.env.KV_URL,
-  token: process.env.KV_REST_API_TOKEN,
-});
+async function getKV(key) {
+  const response = await fetch(`${process.env.KV_URL}/get/${key}`, {
+    headers: {
+      Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`
+    }
+  });
+  if (!response.ok) throw new Error('Failed to get from KV');
+  const data = await response.json();
+  return data.result;
+}
+
+async function setKV(key, value) {
+  const response = await fetch(`${process.env.KV_URL}/set/${key}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.KV_REST_API_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(value)
+  });
+  if (!response.ok) throw new Error('Failed to set KV');
+  return response.json();
+}
 
 // Initialize stats if they don't exist
 async function initializeStats() {
   try {
     console.log('Checking KV connection...');
-    const stats = await kv.get('pwdgen:stats');
+    const stats = await getKV('pwdgen:stats');
     console.log('Current stats:', stats);
     
     if (!stats) {
@@ -20,7 +37,7 @@ async function initializeStats() {
         count: 0,
         lastGenerated: null
       };
-      await kv.set('pwdgen:stats', initialStats);
+      await setKV('pwdgen:stats', initialStats);
       console.log('Stats initialized:', initialStats);
     }
   } catch (error) {
@@ -38,7 +55,7 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET') {
       console.log('Handling GET request...');
-      const stats = await kv.get('pwdgen:stats');
+      const stats = await getKV('pwdgen:stats');
       console.log('Retrieved stats:', stats);
       
       if (!stats) {
@@ -47,7 +64,7 @@ export default async function handler(req, res) {
           count: 0,
           lastGenerated: null
         };
-        await kv.set('pwdgen:stats', initialStats);
+        await setKV('pwdgen:stats', initialStats);
         console.log('Created initial stats:', initialStats);
         return res.status(200).json(initialStats);
       }
@@ -55,7 +72,7 @@ export default async function handler(req, res) {
     } 
     else if (req.method === 'POST') {
       console.log('Handling POST request...');
-      let currentStats = await kv.get('pwdgen:stats');
+      let currentStats = await getKV('pwdgen:stats');
       console.log('Current stats before update:', currentStats);
       
       if (!currentStats) {
@@ -81,7 +98,7 @@ export default async function handler(req, res) {
       };
       
       console.log('Updating stats to:', updatedStats);
-      await kv.set('pwdgen:stats', updatedStats);
+      await setKV('pwdgen:stats', updatedStats);
       console.log('Stats updated successfully');
       
       return res.status(200).json(updatedStats);
