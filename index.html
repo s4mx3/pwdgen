@@ -1595,12 +1595,24 @@
         { id: 'symbols', el: symbolsEl }
       ];
 
+      // Load preferences or use defaults
+      if (!loadPreferences()) {
+        // Set default length
+        syncLengthInputs(defaultPreferences.length);
+        
+        // Set default options
+        toggleButtons.forEach(({ id, el }) => {
+          if (el) {
+            const isActive = defaultPreferences.options[id.replace('s', '')];
+            el.setAttribute('aria-pressed', isActive);
+            el.classList.toggle('active', isActive);
+          }
+        });
+      }
+
+      // Set up toggle button handlers
       toggleButtons.forEach(({ id, el }) => {
         if (!el) return;
-        
-        // Set initial state
-        const isActive = el.getAttribute('aria-pressed') === 'true';
-        el.classList.toggle('active', isActive);
         
         // Add click handler
         el.addEventListener('click', () => {
@@ -1623,21 +1635,6 @@
           savePreferences();
         });
       });
-
-      // Load preferences or use defaults
-      if (!loadPreferences()) {
-        // Set default length
-        syncLengthInputs(defaultPreferences.length);
-        
-        // Set default options
-        toggleButtons.forEach(({ id, el }) => {
-          if (el) {
-            const isActive = defaultPreferences.options[id.replace('s', '')];
-            el.setAttribute('aria-pressed', isActive);
-            el.classList.toggle('active', isActive);
-          }
-        });
-      }
 
       // Set up length controls
       if (lengthSlider && lengthNumber) {
@@ -1720,21 +1717,6 @@
     document.addEventListener('click', (e) => {
       if (!langTrigger.contains(e.target) && !langDropdown.contains(e.target)) {
         langDropdown.hidden = true;
-      }
-    });
-
-    // Add regenerate button handler
-    document.getElementById('regenerate-btn').addEventListener('click', handleRegenerate);
-
-    // Add tooltip positioning
-    document.querySelectorAll('.toggle-btn').forEach(btn => {
-      const tooltip = btn.querySelector('.tooltip');
-      if (tooltip) {
-        btn.addEventListener('mouseenter', () => {
-          const rect = btn.getBoundingClientRect();
-          tooltip.style.left = `${rect.width / 2}px`;
-          tooltip.style.top = `${rect.height + 8}px`;
-        });
       }
     });
 
