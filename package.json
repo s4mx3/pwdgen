@@ -1,0 +1,9 @@
+{
+  "name": "pwdgen",
+  "version": "1.0.0",
+  "description": "Password Generator with shared stats",
+  "main": "index.html",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+} 
