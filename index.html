@@ -1208,7 +1208,7 @@
         if (!response.ok) throw new Error('Failed to fetch stats');
         const data = await response.json();
         if (data) {
-          passwordCount = data.count;
+          passwordCount = data.count || 0;
           lastGenerated = data.lastGenerated;
           updateStatsDisplay();
         }
@@ -1241,8 +1241,9 @@
         
         if (!response.ok) throw new Error('Failed to update stats');
         const data = await response.json();
-        if (data.success) {
-          passwordCount = data.count;
+        if (data) {
+          passwordCount = data.count || 0;
+          lastGenerated = data.lastGenerated;
           updateStatsDisplay();
         }
       } catch (error) {
@@ -1588,7 +1589,7 @@
     async function init() {
       if (isInitialized) return;
       
-      // Load stats from server
+      // Load stats from server first
       await fetchStats();
       
       // Set up toggle buttons
