@@ -18,13 +18,25 @@ export default async function handler(req, res) {
       res.status(200).json(stats);
     } 
     else if (req.method === 'POST') {
-      // Update stats
-      const { count, lastGenerated } = req.body;
+      // Get current count
+      const currentStats = await kv.get('pwdgen:stats') || {
+        count: 0,
+        lastGenerated: null
+      };
+      
+      // Increment the count
+      const newCount = currentStats.count + 1;
+      
+      // Update stats with new count and timestamp
       await kv.set('pwdgen:stats', {
-        count: count,
-        lastGenerated: lastGenerated
+        count: newCount,
+        lastGenerated: new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit'})
       });
-      res.status(200).json({ success: true });
+      
+      res.status(200).json({ 
+        success: true,
+        count: newCount
+      });
     }
     else {
       res.status(405).json({ error: 'Method not allowed' });
