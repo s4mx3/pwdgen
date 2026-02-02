@@ -848,69 +848,78 @@ kbd {
 
 /* Info Section */
 .info-section {
-    padding: 0 24px 60px;
+    position: relative;
+    z-index: 1;
+    padding: 0 24px 80px;
 }
 
 .info-panel {
     max-width: 550px;
     margin: 0 auto;
     padding: 2rem;
-    background: var(--bg-card);
-    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
     border-radius: var(--radius-lg);
-    backdrop-filter: blur(20px);
-    width: 100%;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
 }
 
 .info-panel h2 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     margin-bottom: 2rem;
+    color: var(--text-primary);
     text-align: center;
     font-weight: 700;
+    letter-spacing: -0.02em;
 }
-
-
 
 .info-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1rem;
 }
 
 .info-card {
-    padding: 1.5rem;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid var(--glass-border);
+    background: rgba(0, 0, 0, 0.2);
     border-radius: var(--radius);
-    transition: all var(--transition);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid var(--glass-border);
 }
 
 .info-card:hover {
-    background: rgba(255, 255, 255, 0.04);
-    transform: translateY(-5px);
-    border-color: var(--accent-glow);
+    transform: translateY(-8px);
+    border-color: var(--border-glow);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 40px var(--accent-glow);
 }
 
 .info-card i {
-    font-size: 1.5rem;
-    color: var(--accent-primary);
+    font-size: 2rem;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin-bottom: 1rem;
-    display: inline-block;
-    padding: 12px;
-    background: rgba(99, 102, 241, 0.1);
-    border-radius: 12px;
+    transition: transform var(--transition);
+}
+
+.info-card:hover i {
+    transform: scale(1.15);
 }
 
 .info-card h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1.15rem;
     margin-bottom: 0.75rem;
     color: var(--text-primary);
+    font-weight: 600;
 }
 
 .info-card p {
-    color: var(--text-secondary);
     font-size: 0.95rem;
+    color: var(--text-secondary);
     line-height: 1.6;
 }
 
