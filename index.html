@@ -526,17 +526,40 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.6rem;
-      padding: 0.9rem 1rem;
-      border: 1.5px solid var(--glass-border);
-      border-radius: var(--radius);
-      background: rgba(0, 0, 0, 0.2);
-      color: var(--text-secondary);
+      gap: 0.7rem;
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
       font-size: 0.95rem;
       font-weight: 500;
+      font-family: var(--font-sans);
       cursor: pointer;
-      transition: all var(--transition);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       outline: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .toggle-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent-gradient);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .toggle-btn i,
+    .toggle-btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .toggle-btn i {
+      font-size: 0.9rem;
+      transition: transform 0.3s ease;
     }
 
     .toggle-btn .tooltip {
@@ -544,16 +567,28 @@
     }
 
     .toggle-btn[aria-pressed="true"] {
-      background: var(--accent-gradient);
-      color: #fff;
       border-color: transparent;
-      box-shadow: 0 4px 15px var(--accent-glow);
+      color: #fff;
+      box-shadow: 0 4px 20px var(--accent-glow), 0 0 0 1px rgba(99, 102, 241, 0.3);
+    }
+
+    .toggle-btn[aria-pressed="true"]::before {
+      opacity: 1;
+    }
+
+    .toggle-btn[aria-pressed="true"] i {
+      transform: scale(1.1);
     }
 
     .toggle-btn:hover:not([aria-pressed="true"]) {
-      background: rgba(99, 102, 241, 0.1);
-      border-color: var(--accent-primary);
+      background: rgba(99, 102, 241, 0.08);
+      border-color: rgba(99, 102, 241, 0.4);
       color: var(--text-primary);
+      transform: translateY(-2px);
+    }
+
+    .toggle-btn:active {
+      transform: scale(0.98);
     }
 
     /* Slider Group */
@@ -583,47 +618,54 @@
       border-radius: 4px;
       outline: none;
       cursor: pointer;
+      position: relative;
     }
 
     #length-slider::-webkit-slider-runnable-track {
       height: 8px;
-      background: linear-gradient(to right, var(--accent-primary), var(--accent-tertiary));
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 4px;
     }
 
     #length-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 20px;
-      height: 20px;
-      background: #fff;
+      width: 22px;
+      height: 22px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
       border-radius: 50%;
       cursor: pointer;
-      margin-top: -6px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      transition: all var(--transition);
-      border: 3px solid var(--accent-primary);
+      margin-top: -7px;
+      box-shadow: 0 2px 10px var(--accent-glow), 0 0 0 3px rgba(255, 255, 255, 0.9);
+      transition: all 0.2s ease;
+      border: none;
     }
 
     #length-slider::-webkit-slider-thumb:hover {
       transform: scale(1.15);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 15px var(--accent-glow), 0 0 0 4px rgba(255, 255, 255, 1);
     }
 
     #length-slider::-moz-range-track {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+
+    #length-slider::-moz-range-progress {
       height: 8px;
       background: linear-gradient(to right, var(--accent-primary), var(--accent-tertiary));
       border-radius: 4px;
     }
 
     #length-slider::-moz-range-thumb {
-      width: 20px;
-      height: 20px;
-      background: #fff;
+      width: 22px;
+      height: 22px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
       border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      border: 3px solid var(--accent-primary);
+      box-shadow: 0 2px 10px var(--accent-glow), 0 0 0 3px rgba(255, 255, 255, 0.9);
+      border: none;
     }
 
     #length-number {
@@ -1113,7 +1155,7 @@
           <i class="fab fa-github" aria-hidden="true"></i>
         </a>
       </div>
-      <p class="footer-copy">© 2026 PwdGen. All passwords generated locally.</p>
+      <p class="footer-copy">© 2026 äkv</p>
     </div>
   </footer>
 
@@ -1381,6 +1423,16 @@
     function syncLengthInputs(val) {
       elements.lengthSlider.value = val;
       elements.lengthNumber.value = val;
+      updateSliderFill();
+    }
+
+    function updateSliderFill() {
+      const slider = elements.lengthSlider;
+      const min = parseInt(slider.min);
+      const max = parseInt(slider.max);
+      const val = parseInt(slider.value);
+      const percent = ((val - min) / (max - min)) * 100;
+      slider.style.background = `linear-gradient(to right, var(--accent-primary) 0%, var(--accent-tertiary) ${percent}%, rgba(255, 255, 255, 0.1) ${percent}%)`;
     }
 
     // --- Stats ---
@@ -1553,6 +1605,8 @@
 
       if (!loadPreferences()) {
         syncLengthInputs(16);
+      } else {
+        updateSliderFill();
       }
 
       // Toggle button handlers
