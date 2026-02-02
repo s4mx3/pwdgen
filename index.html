@@ -1,141 +1,471 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Password Generator</title>
+  <title>Password Generator - Secure & Modern</title>
+  <meta name="description"
+    content="Generate strong, secure passwords with our modern password generator. Customizable length and character options.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     :root {
-      /* Dark theme colors */
-      --bg: #0a0a0f;
-      --surface: rgba(26, 26, 46, 0.8);
-      --surface-hover: rgba(37, 37, 66, 0.9);
-      --text: #e2e8f0;
-      --text-muted: #94a3b8;
-      --border: rgba(45, 45, 68, 0.5);
-      --border-hover: rgba(61, 61, 84, 0.7);
-      
-      /* Accent colors */
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --primary-light: rgba(59, 130, 246, 0.1);
-      
-      /* Status colors */
-      --danger: #ef4444;
+      /* HIBP-style Dark Theme */
+      --bg-primary: #050508;
+      --bg-secondary: #0a0a0f;
+      --bg-card: rgba(255, 255, 255, 0.03);
+      --bg-card-hover: rgba(255, 255, 255, 0.06);
+
+      /* Accent Colors - Purple/Indigo Gradient */
+      --accent-primary: #6366f1;
+      --accent-secondary: #8b5cf6;
+      --accent-tertiary: #a855f7;
+      --accent-hover: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.4);
+      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+
+      /* Text Colors */
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+
+      /* Border Colors */
+      --border-color: rgba(255, 255, 255, 0.06);
+      --border-glow: rgba(99, 102, 241, 0.5);
+
+      /* Status Colors */
+      --success: #22c55e;
       --warning: #f59e0b;
-      --success: #10b981;
-      --excellent: #3b82f6;
-      
-      /* UI elements */
-      --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
-      --shadow: 0 4px 8px rgba(0,0,0,0.15);
-      --shadow-lg: 0 8px 16px rgba(0,0,0,0.2);
+      --danger: #ef4444;
+      --excellent: #06d6a0;
+
+      /* Glass Effect */
+      --glass-bg: rgba(255, 255, 255, 0.02);
+      --glass-border: rgba(255, 255, 255, 0.08);
+
+      /* Sizing */
       --radius: 16px;
       --radius-lg: 24px;
       --radius-full: 9999px;
-      --transition: 0.2s ease;
-      
-      /* Typography */
-      --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+      --shadow-sm: 0 2px 8px 0 rgba(99, 102, 241, 0.1);
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* Fonts */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
     }
 
-    html {
-      box-sizing: border-box;
-      height: 100%;
-      overflow-x: hidden;
-    }
-
-    *, *:before, *:after {
-      box-sizing: inherit;
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
-      min-height: 100vh;
-      margin: 0;
       font-family: var(--font-sans);
-      color: var(--text);
-      transition: color var(--transition);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem;
-      line-height: 1.5;
-      position: relative;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
       overflow-x: hidden;
+      letter-spacing: -0.01em;
     }
 
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, var(--bg), #1a1a2e);
-      z-index: -2;
-    }
-
+    /* Premium noise texture overlay */
     body::after {
       content: '';
       position: fixed;
       top: 0;
       left: 0;
-      right: 0;
-      bottom: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1), transparent 70%);
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    main {
       width: 100%;
-      max-width: 480px;
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-lg);
-      padding: 2rem;
-      transition: all var(--transition);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-      position: relative;
-      z-index: 1;
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.02;
+      pointer-events: none;
+      z-index: 1000;
     }
 
-    h1 {
-      font-size: 1.75rem;
-      margin: 0 0 1.5rem 0;
-      text-align: center;
+    /* Animated gradient orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .orb-1 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
+      top: -200px;
+      left: -100px;
+      animation: float-1 20s ease-in-out infinite;
+    }
+
+    .orb-2 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 70%);
+      top: 30%;
+      right: -150px;
+      animation: float-2 25s ease-in-out infinite;
+    }
+
+    .orb-3 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%);
+      bottom: -100px;
+      left: 30%;
+      animation: float-3 18s ease-in-out infinite;
+    }
+
+    @keyframes float-1 {
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      33% {
+        transform: translate(50px, 30px) scale(1.05);
+      }
+
+      66% {
+        transform: translate(-30px, 50px) scale(0.95);
+      }
+    }
+
+    @keyframes float-2 {
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      33% {
+        transform: translate(-40px, -50px) scale(1.1);
+      }
+
+      66% {
+        transform: translate(30px, 20px) scale(0.9);
+      }
+    }
+
+    @keyframes float-3 {
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      50% {
+        transform: translate(60px, -40px) scale(1.08);
+      }
+    }
+
+    /* Navigation */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5, 5, 8, 0.7);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 72px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      transition: transform 0.3s ease;
+    }
+
+    .brand:hover {
+      transform: scale(1.02);
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      background: var(--accent-gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: white;
+      box-shadow: 0 4px 20px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-icon::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%) rotate(45deg);
+      }
+
+      100% {
+        transform: translateX(100%) rotate(45deg);
+      }
+    }
+
+    .brand-text {
       font-weight: 700;
-      color: var(--text);
+      font-size: 1.4rem;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       letter-spacing: -0.02em;
     }
 
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 80px 24px 40px;
+      text-align: center;
+    }
+
+    .hero-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      padding: 10px 20px;
+      border-radius: 100px;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-bottom: 32px;
+      backdrop-filter: blur(10px);
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    .hero-badge-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--success);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        box-shadow: 0 0 12px var(--success);
+      }
+
+      50% {
+        opacity: 0.6;
+        box-shadow: 0 0 20px var(--success), 0 0 40px var(--success);
+      }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-primary) 40%, var(--accent-primary) 60%, var(--accent-secondary) 80%, var(--accent-tertiary) 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeInUp 0.8s ease-out 0.1s backwards, gradientShift 8s ease infinite;
+    }
+
+    @keyframes gradientShift {
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 500px;
+      margin: 0 auto 32px;
+      line-height: 1.7;
+      animation: fadeInUp 0.8s ease-out 0.2s backwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Main Generator Card */
+    .generator-section {
+      position: relative;
+      z-index: 1;
+      padding: 0 24px 60px;
+    }
+
+    .generator-card {
+      max-width: 550px;
+      margin: 0 auto;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .generator-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .generator-card:hover {
+      border-color: var(--border-glow);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 60px var(--accent-glow);
+    }
+
+    .generator-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Password Display */
     .password-group {
       display: flex;
       align-items: center;
       gap: 0.75rem;
       margin-bottom: 1.5rem;
-      background: rgba(10, 10, 15, 0.5);
-      border: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.3);
+      border: 1.5px solid var(--glass-border);
       border-radius: var(--radius);
       padding: 1.25rem;
-      transition: all var(--transition);
-      box-shadow: var(--shadow);
       position: relative;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      transition: border var(--transition), box-shadow var(--transition);
     }
 
     .password-group:focus-within {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px var(--primary-light), inset 0 2px 4px rgba(0,0,0,0.1);
-      transform: translateY(-1px);
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
+    #password {
+      flex: 1;
+      font-size: 1.2rem;
+      font-family: var(--font-mono);
+      padding: 0.5rem;
+      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      outline: none;
+      min-width: 0;
+      user-select: all;
+      letter-spacing: 0.03em;
+      font-weight: 500;
+    }
+
+    #password::placeholder {
+      color: var(--text-muted);
+      font-style: italic;
+      font-size: 0.9em;
+      font-family: var(--font-sans);
+    }
+
+    #password-placeholder-fallback {
+      display: none;
+      position: absolute;
+      left: 1.25rem;
+      color: var(--text-muted);
+      font-style: italic;
+      font-size: 0.95rem;
+      pointer-events: none;
+    }
+
+    .password-group.fallback-active #password-placeholder-fallback {
+      display: block;
     }
 
     .password-actions {
@@ -151,331 +481,152 @@
       width: 2.75rem;
       height: 2.75rem;
       border: none;
-      border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.1);
-      color: var(--text);
+      border-radius: var(--radius-full);
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--accent-primary);
       cursor: pointer;
       transition: all var(--transition);
-      box-shadow: var(--shadow);
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .btn-icon::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(rgba(255,255,255,0.2), transparent);
-      opacity: 0;
-      transition: opacity var(--transition);
-    }
-
-    .btn-icon:hover::after {
-      opacity: 1;
-    }
-
-    .btn-icon:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-lg);
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .btn-icon:active {
-      transform: translateY(0);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .btn-icon i {
       font-size: 1.1rem;
+    }
+
+    .btn-icon:hover:not(:disabled) {
+      background: var(--accent-primary);
+      color: #fff;
+      transform: scale(1.05);
+      box-shadow: 0 4px 20px var(--accent-glow);
     }
 
     .btn-icon.success {
       background: var(--success);
-      color: white;
-      animation: successPulse 0.3s ease;
-    }
-
-    .btn-icon.loading {
-      background: rgba(255, 255, 255, 0.15);
-      color: var(--text);
+      color: #fff;
     }
 
     .btn-icon:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
-      pointer-events: none;
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.05);
     }
 
-    @keyframes successPulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
-    }
-
-    .tooltip {
-      position: absolute;
-      background: rgba(0, 0, 0, 0.8);
-      color: white;
-      padding: 0.5rem 0.75rem;
-      border-radius: var(--radius);
-      font-size: 0.875rem;
-      pointer-events: none;
-      opacity: 0;
-      transform: translateY(4px);
-      transition: all var(--transition);
-      z-index: 1000;
-      white-space: nowrap;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-    }
-
-    .tooltip::before {
-      content: '';
-      position: absolute;
-      top: -4px;
-      left: 50%;
-      transform: translateX(-50%);
-      border-left: 4px solid transparent;
-      border-right: 4px solid transparent;
-      border-bottom: 4px solid rgba(0, 0, 0, 0.8);
-    }
-
-    .tooltip.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    #password {
-      flex: 1;
-      font-size: 1.25rem;
-      font-family: var(--font-mono);
-      padding: 0.75rem 1rem;
-      border: none;
-      background: transparent;
-      color: var(--text);
-      transition: all var(--transition);
-      outline: none;
-      min-width: 0;
-      user-select: all;
-      padding-right: 6rem;
-    }
-
-    #password::placeholder,
-    #password::-webkit-input-placeholder,
-    #password:-ms-input-placeholder,
-    #password::-moz-placeholder,
-    #password:-moz-placeholder {
-      color: #888;
-      font-style: italic;
-      font-size: 0.9em;
-      font-family: sans-serif;
-      opacity: 0.7;
-    }
-
-    #password-placeholder-fallback {
-      position: absolute;
-      left: 1.25rem;
-      right: calc(2.75rem * 2 + 1.5rem);
-      top: 50%;
-      transform: translateY(-50%);
-      color: #888;
-      font-style: italic;
-      font-size: 0.85rem;
-      font-family: var(--font-mono);
-      font-weight: 400;
-      opacity: 0.7;
-      pointer-events: none;
-      user-select: none;
-      z-index: 2;
-      transition: opacity 0.2s;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: calc(100% - 7rem);
-      display: none;
-    }
-
+    /* Toggle Buttons */
     .toggle-group {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 0.75rem;
       margin-bottom: 1.5rem;
-      padding: 1.25rem;
-      background: rgba(10, 10, 15, 0.5);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
     }
 
     .toggle-btn {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.75rem;
-      padding: 0.75rem 1rem;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      gap: 0.6rem;
+      padding: 0.9rem 1rem;
+      border: 1.5px solid var(--glass-border);
       border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.1);
-      color: var(--text);
+      background: rgba(0, 0, 0, 0.2);
+      color: var(--text-secondary);
       font-size: 0.95rem;
       font-weight: 500;
       cursor: pointer;
       transition: all var(--transition);
-      user-select: none;
-      height: 2.75rem;
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      width: 100%;
+      outline: none;
     }
 
-    .toggle-btn i {
-      font-size: 1.1rem;
-      color: var(--text);
-      transition: all var(--transition);
-    }
-
-    .toggle-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: var(--text);
-      transform: translateY(-1px);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .toggle-btn:hover i {
-      transform: scale(1.1);
+    .toggle-btn .tooltip {
+      display: none;
     }
 
     .toggle-btn[aria-pressed="true"] {
-      background: var(--primary-light);
-      color: var(--text);
-      border-color: var(--primary);
+      background: var(--accent-gradient);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 15px var(--accent-glow);
     }
 
-    .toggle-btn[aria-pressed="true"] i {
-      color: var(--text);
+    .toggle-btn:hover:not([aria-pressed="true"]) {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--accent-primary);
+      color: var(--text-primary);
     }
 
-    .toggle-btn[aria-pressed="true"]::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(rgba(59, 130, 246, 0.1), transparent);
-      opacity: 0;
-      transition: opacity var(--transition);
-    }
-
-    .toggle-btn[aria-pressed="true"]:hover::before {
-      opacity: 1;
-    }
-
-    .toggle-group {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
-      padding: 1.25rem;
-      background: rgba(10, 10, 15, 0.5);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
-    }
-
+    /* Slider Group */
     .slider-group {
       display: flex;
       align-items: center;
       gap: 1rem;
       margin-bottom: 1.5rem;
-      padding: 1.25rem;
-      background: rgba(10, 10, 15, 0.5);
+      padding: 1rem 1.25rem;
+      background: rgba(0, 0, 0, 0.2);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
+      border: 1.5px solid var(--glass-border);
+    }
+
+    .slider-group label {
+      font-weight: 500;
+      color: var(--text-secondary);
+      min-width: 60px;
     }
 
     #length-slider {
       flex: 1;
-      height: 4px;
+      height: 6px;
       -webkit-appearance: none;
-      background: var(--border);
-      border-radius: 2px;
+      background: linear-gradient(to right, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
+      border-radius: 3px;
       outline: none;
-      transition: background var(--transition);
     }
 
     #length-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
-      background: var(--primary);
+      width: 22px;
+      height: 22px;
+      background: #fff;
       border-radius: 50%;
       cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), 0 0 0 3px var(--accent-primary);
       transition: all var(--transition);
-      box-shadow: var(--shadow);
     }
 
     #length-slider::-webkit-slider-thumb:hover {
       transform: scale(1.1);
-      background: var(--primary-hover);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 0 4px var(--accent-secondary);
     }
 
     #length-number {
       width: 4rem;
       font-size: 1rem;
       padding: 0.5rem;
-      border: 2px solid var(--border);
+      border: 1.5px solid var(--glass-border);
       border-radius: var(--radius);
-      background: var(--surface);
-      color: var(--text);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text-primary);
       text-align: center;
       transition: all var(--transition);
     }
 
     #length-number:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px var(--primary-light);
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+      outline: none;
     }
 
+    /* Strength Meter */
     .strength-group {
       display: flex;
       align-items: center;
       gap: 1rem;
       margin-bottom: 1.5rem;
-      padding: 1.25rem;
-      background: rgba(10, 10, 15, 0.5);
+      padding: 1rem 1.25rem;
+      background: rgba(0, 0, 0, 0.2);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
+      border: 1.5px solid var(--glass-border);
     }
 
     #strength-meter {
       flex: 1;
       height: 8px;
-      background: var(--border);
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 4px;
       overflow: hidden;
-      transition: background var(--transition);
     }
 
     #strength-bar {
@@ -483,7 +634,7 @@
       width: 0%;
       background: var(--danger);
       border-radius: 4px;
-      transition: width 0.3s ease, background 0.3s ease;
+      transition: width 0.4s ease, background 0.4s ease;
     }
 
     #strength-label {
@@ -494,47 +645,126 @@
       transition: color var(--transition);
     }
 
+    /* Stats */
     .stats {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: var(--radius);
+      border: 1.5px solid var(--glass-border);
       font-size: 0.9rem;
       color: var(--text-muted);
-      margin-bottom: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      padding: 1.25rem;
-      background: var(--bg);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
     }
 
     .stats span {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      min-height: 1.5rem;
     }
 
     .stats i {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      width: 1rem;
-      text-align: center;
+      color: var(--accent-primary);
     }
 
-    .stats #counter,
-    .stats #last-time {
+    /* Info Panel */
+    .info-section {
+      position: relative;
+      z-index: 1;
+      padding: 0 24px 80px;
+    }
+
+    .info-panel {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: var(--glass-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+    }
+
+    .info-panel h2 {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      color: var(--text-primary);
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .info-card {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid var(--glass-border);
+    }
+
+    .info-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--border-glow);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 40px var(--accent-glow);
+    }
+
+    .info-card i {
+      font-size: 2rem;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+      transition: transform var(--transition);
+    }
+
+    .info-card:hover i {
+      transform: scale(1.15);
+    }
+
+    .info-card h3 {
+      font-size: 1.15rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
       font-weight: 600;
-      color: var(--text);
-      min-width: 2rem;
-      display: inline-block;
+    }
+
+    .info-card p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    .footer {
+      position: relative;
+      z-index: 1;
+      padding: 40px 24px;
+      border-top: 1px solid var(--glass-border);
+    }
+
+    .footer-container {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
     }
 
     .footer-controls {
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       gap: 1rem;
-      margin-top: 2rem;
+      margin-bottom: 1.5rem;
     }
 
     .lang-selector {
@@ -546,51 +776,44 @@
       align-items: center;
       gap: 0.5rem;
       padding: 0.75rem 1rem;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: var(--radius);
-      color: var(--text);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-full);
+      color: var(--text-secondary);
       font-size: 0.9rem;
       cursor: pointer;
       transition: all var(--transition);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
     }
 
     .lang-trigger:hover {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.2);
-      transform: translateY(-1px);
-    }
-
-    .lang-trigger i {
-      font-size: 0.9rem;
-      color: var(--text-muted);
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--accent-primary);
+      color: var(--text-primary);
     }
 
     .lang-dropdown {
       position: absolute;
       bottom: 100%;
-      left: 0;
+      left: 50%;
+      transform: translateX(-50%);
       margin-bottom: 0.5rem;
-      background: rgba(10, 10, 15, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(10, 10, 15, 0.95);
+      border: 1px solid var(--glass-border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       min-width: 150px;
       z-index: 100;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(20px);
+      overflow: hidden;
     }
 
     .lang-option {
-      display: flex;
-      align-items: center;
+      display: block;
       width: 100%;
       padding: 0.75rem 1rem;
       background: none;
       border: none;
-      color: var(--text);
+      color: var(--text-secondary);
       font-size: 0.9rem;
       text-align: left;
       cursor: pointer;
@@ -598,338 +821,58 @@
     }
 
     .lang-option:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--text-primary);
     }
 
     .lang-option.active {
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.15);
+      background: var(--accent-primary);
+      color: #fff;
     }
 
     .footer-controls a {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 2.75rem;
-      height: 2.75rem;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: var(--radius);
-      color: var(--text);
+      width: 2.5rem;
+      height: 2.5rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-full);
+      color: var(--text-secondary);
+      text-decoration: none;
       transition: all var(--transition);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
     }
 
     .footer-controls a:hover {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.2);
-      transform: translateY(-1px);
+      background: rgba(99, 102, 241, 0.15);
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
     }
 
-    .footer-controls a i {
-      font-size: 1.1rem;
-    }
-
-    @media (max-width: 640px) {
-      main {
-        padding: 1.5rem;
-      }
-
-      .toggle-group {
-        grid-template-columns: 1fr;
-      }
-
-      .toggle-btn {
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 480px) {
-      body {
-        min-height: 100vh;
-        height: auto;
-        padding: 0.5rem;
-        overflow-x: hidden;
-      }
-
-      main {
-        margin: 0.5rem;
-        height: auto;
-        overflow-x: hidden;
-      }
-
-      .toggle-group {
-        grid-template-columns: 1fr;
-        gap: 0.5rem;
-        padding: 1rem;
-      }
-
-      .password-group {
-        padding: 0.875rem;
-        margin-bottom: 1.25rem;
-      }
-
-      #password {
-        font-size: 1rem;
-        padding: 0.5rem 0.75rem;
-      }
-
-      .btn-icon {
-        width: 2.25rem;
-        height: 2.25rem;
-      }
-
-      .btn-icon i {
-        font-size: 1rem;
-      }
-
-      .slider-group {
-        padding: 1rem;
-        margin-bottom: 1.25rem;
-      }
-
-      .info-panel {
-        padding: 1rem;
-      }
-
-      .info-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-
-      .info-card {
-        padding: 1rem;
-      }
-
-      .info-card h3 {
-        font-size: 1.1rem;
-      }
-
-      .info-card p {
-        font-size: 0.9rem;
-      }
-
-      .tooltip {
-        display: none;
-      }
-
-      .toggle-btn {
-        height: 2.5rem;
-        font-size: 0.9rem;
-        padding: 0.5rem 0.75rem;
-      }
-
-      .toggle-btn i {
-        font-size: 1rem;
-      }
-    }
-
-    @media (max-width: 360px) {
-      main {
-        padding: 1rem;
-      }
-
-      h1 {
-        font-size: 1.5rem;
-        margin-bottom: 1.25rem;
-      }
-
-      .password-group {
-        padding: 0.75rem;
-      }
-
-      .btn-icon {
-        width: 2rem;
-        height: 2rem;
-      }
-
-      .btn-icon i {
-        font-size: 0.9rem;
-      }
-    }
-
-    /* Add smooth scrolling */
-    html {
-      scroll-behavior: smooth;
-    }
-
-    /* Improve focus styles for accessibility */
-    *:focus-visible {
-      outline: 2px solid var(--primary);
-      outline-offset: 2px;
-    }
-
-    /* Update regenerate button animation */
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .btn-icon.loading i {
-      animation: spin 0.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    }
-
-    /* Improve touch targets on mobile */
-    @media (hover: none) {
-      .btn-icon,
-      .toggle-btn {
-        min-height: 44px;
-      }
-
-      .slider-group input[type="range"] {
-        min-height: 44px;
-      }
-    }
-
-    /* Add subtle hover effect for info cards */
-    .info-card {
-      transition: transform var(--transition), box-shadow var(--transition);
-    }
-
-    .info-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    /* Improve password input readability */
-    #password {
-      letter-spacing: 0.05em;
-      font-weight: 500;
-    }
-
-    /* Add subtle animation for strength meter */
-    .strength-bar {
-      transition: width 0.3s ease, background-color 0.3s ease;
-    }
-
-    /* Improve stats section readability */
-    .stats {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      padding: 1rem;
-      background: rgba(10, 10, 15, 0.5);
-      border-radius: var(--radius);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
-    }
-
-    .stats span {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9rem;
+    .footer-copy {
       color: var(--text-muted);
+      font-size: 0.85rem;
     }
 
-    .stats i {
-      width: 1rem;
-      text-align: center;
-    }
-
-    .password-group.fallback-active {
-      border: 2px solid red !important;
-    }
-
-    .info-panel {
-      margin-top: 2rem;
-      padding: 1.5rem;
-      background: rgba(10, 10, 15, 0.5);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
-    }
-
-    .info-panel h2 {
-      font-size: 1.25rem;
-      margin-bottom: 1.5rem;
-      color: var(--text);
-      text-align: center;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1rem;
-    }
-
-    .info-card {
-      background: rgba(10, 10, 15, 0.5);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      transition: transform var(--transition), box-shadow var(--transition);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-
-    .info-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-      border-color: var(--border-hover);
-    }
-
-    .info-card i {
-      font-size: 1.75rem;
-      color: var(--primary);
-      margin-bottom: 1rem;
-      transition: transform var(--transition);
-    }
-
-    .info-card:hover i {
-      transform: scale(1.1);
-    }
-
-    .info-card h3 {
-      font-size: 1.1rem;
-      margin-bottom: 0.75rem;
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    .info-card p {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    @media (max-width: 640px) {
-      .info-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .info-card {
-        padding: 1.25rem;
-      }
-    }
-
-    /* Add toast notification styles */
+    /* Toast */
     .toast {
       position: fixed;
       bottom: 2rem;
       left: 50%;
       transform: translateX(-50%) translateY(100%);
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: var(--text);
-      padding: 0.75rem 1.5rem;
-      border-radius: var(--radius);
-      font-size: 0.9rem;
+      background: rgba(10, 10, 15, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      padding: 0.85rem 1.75rem;
+      border-radius: var(--radius-full);
+      font-size: 0.95rem;
+      font-weight: 500;
       opacity: 0;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 1000;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
     }
 
     .toast.show {
@@ -937,130 +880,222 @@
       opacity: 1;
     }
 
-    /* Add generation animation */
-    @keyframes generatePulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.02); }
-      100% { transform: scale(1); }
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero {
+        padding: 60px 20px 30px;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .generator-card {
+        padding: 1.5rem;
+      }
+
+      .toggle-group {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .orb-1,
+      .orb-2,
+      .orb-3 {
+        opacity: 0.4;
+      }
     }
 
-    .password-group.generating {
-      animation: generatePulse 0.3s ease;
+    @media (max-width: 480px) {
+      .generator-section {
+        padding: 0 16px 40px;
+      }
+
+      .brand-text {
+        display: none;
+      }
+
+      #password {
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
+
 <body>
-  <main>
-    <h1 id="title">Password Generator</h1>
-    <div class="password-group">
-      <input id="password" type="text" aria-label="Generated password" 
-             placeholder="Please select at least one option" />
-      <span id="password-placeholder-fallback">Please select at least one option</span>
-      <div class="password-actions">
-        <button id="copy-btn" type="button" class="btn-icon" aria-label="Copy password">
-          <i class="fas fa-clipboard" aria-hidden="true"></i>
-        </button>
-        <button id="regenerate-btn" type="button" class="btn-icon" aria-label="Regenerate password">
-          <i class="fas fa-sync-alt" aria-hidden="true"></i>
-        </button>
+  <!-- Animated Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="/" class="brand">
+        <div class="brand-icon"><i class="fas fa-key"></i></div>
+        <span class="brand-text">PwdGen</span>
+      </a>
+      <div class="nav-controls">
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub repository">
+          <i class="fab fa-github" aria-hidden="true"></i>
+        </a>
       </div>
     </div>
-    <div class="toggle-group">
-      <button type="button" class="toggle-btn" id="lowercase" aria-pressed="true" data-tooltip="Include lowercase letters (a-z)">
-        <i class="fas fa-font" aria-hidden="true"></i>
-        <span>Lowercase</span>
-        <div class="tooltip">Include lowercase letters (a-z)</div>
-      </button>
-      <button type="button" class="toggle-btn" id="uppercase" aria-pressed="true" data-tooltip="Include uppercase letters (A-Z)">
-        <i class="fas fa-font" aria-hidden="true"></i>
-        <span>Uppercase</span>
-        <div class="tooltip">Include uppercase letters (A-Z)</div>
-      </button>
-      <button type="button" class="toggle-btn" id="numbers" aria-pressed="true" data-tooltip="Include numbers (0-9)">
-        <i class="fas fa-hashtag" aria-hidden="true"></i>
-        <span>Numbers</span>
-        <div class="tooltip">Include numbers (0-9)</div>
-      </button>
-      <button type="button" class="toggle-btn" id="symbols" aria-pressed="true" data-tooltip="Include symbols (!@#$%^&*()-_=+~`|:;,.<>?)">
-        <i class="fas fa-at" aria-hidden="true"></i>
-        <span>Symbols</span>
-        <div class="tooltip">Include symbols (!@#$%^&*()-_=+~`|:;,.<>?)</div>
-      </button>
-    </div>
-    <div class="slider-group">
-      <label for="length-slider" id="length-label">Length</label>
-      <input id="length-slider" type="range" min="8" max="128" value="16" />
-      <input id="length-number" type="number" min="8" max="128" value="16" />
-    </div>
-    <div class="strength-group">
-      <div id="strength-meter">
-        <div id="strength-bar"></div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        <span id="status-text">Secure & Private</span>
       </div>
-      <span id="strength-label">Strength</span>
+      <h1 id="title">Password Generator</h1>
+      <p id="subtitle">Generate strong, unique passwords instantly. Your passwords are created locally and never stored.
+      </p>
     </div>
-    <div class="stats">
-      <span>
-        <i class="fas fa-key" aria-hidden="true"></i>
-        <span id="passwords-generated-label">Passwords generated:</span> <span id="counter">0</span>
-      </span>
-      <span>
-        <i class="fas fa-clock" aria-hidden="true"></i>
-        <span id="last-generated-label">Last generated:</span> <span id="last-time">—</span>
-      </span>
+  </section>
+
+  <!-- Generator Section -->
+  <section class="generator-section">
+    <div class="generator-card">
+      <div class="password-group">
+        <input id="password" type="text" aria-label="Generated password" placeholder="Please select at least one option"
+          readonly />
+        <span id="password-placeholder-fallback">Please select at least one option</span>
+        <div class="password-actions">
+          <button id="copy-btn" type="button" class="btn-icon" aria-label="Copy password" disabled>
+            <i class="fas fa-clipboard" aria-hidden="true"></i>
+          </button>
+          <button id="regenerate-btn" type="button" class="btn-icon" aria-label="Regenerate password">
+            <i class="fas fa-sync-alt" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="toggle-group">
+        <button type="button" class="toggle-btn" id="lowercase" aria-pressed="true">
+          <i class="fas fa-font" aria-hidden="true"></i>
+          <span>Lowercase</span>
+        </button>
+        <button type="button" class="toggle-btn" id="uppercase" aria-pressed="true">
+          <i class="fas fa-font" aria-hidden="true"></i>
+          <span>Uppercase</span>
+        </button>
+        <button type="button" class="toggle-btn" id="numbers" aria-pressed="true">
+          <i class="fas fa-hashtag" aria-hidden="true"></i>
+          <span>Numbers</span>
+        </button>
+        <button type="button" class="toggle-btn" id="symbols" aria-pressed="true">
+          <i class="fas fa-at" aria-hidden="true"></i>
+          <span>Symbols</span>
+        </button>
+      </div>
+
+      <div class="slider-group">
+        <label for="length-slider" id="length-label">Length</label>
+        <input id="length-slider" type="range" min="8" max="128" value="16" />
+        <input id="length-number" type="number" min="8" max="128" value="16" />
+      </div>
+
+      <div class="strength-group">
+        <div id="strength-meter">
+          <div id="strength-bar"></div>
+        </div>
+        <span id="strength-label">Strength</span>
+      </div>
+
+      <div class="stats">
+        <span>
+          <i class="fas fa-key" aria-hidden="true"></i>
+          <span id="passwords-generated-label">Generated:</span>
+          <span id="counter">0</span>
+        </span>
+        <span>
+          <i class="fas fa-clock" aria-hidden="true"></i>
+          <span id="last-generated-label">Last:</span>
+          <span id="last-time">—</span>
+        </span>
+      </div>
     </div>
+  </section>
+
+  <!-- Info Section -->
+  <section class="info-section">
     <div class="info-panel">
-      <h2>What makes a strong password?</h2>
+      <h2 id="info-title">What makes a strong password?</h2>
       <div class="info-grid">
         <div class="info-card">
           <i class="fas fa-ruler-horizontal"></i>
-          <h3>Long</h3>
-          <p>Use at least 12 characters. Longer passwords are exponentially harder to crack.</p>
+          <h3 id="info-long-title">Long</h3>
+          <p id="info-long-desc">Use at least 12 characters. Longer passwords are exponentially harder to crack.</p>
         </div>
         <div class="info-card">
           <i class="fas fa-layer-group"></i>
-          <h3>Complex</h3>
-          <p>Mix uppercase and lowercase letters, numbers, and symbols for maximum security.</p>
+          <h3 id="info-complex-title">Complex</h3>
+          <p id="info-complex-desc">Mix uppercase and lowercase letters, numbers, and symbols for maximum security.</p>
         </div>
         <div class="info-card">
           <i class="fas fa-fingerprint"></i>
-          <h3>Unique</h3>
-          <p>Never reuse passwords across different accounts. Each account needs its own strong password.</p>
+          <h3 id="info-unique-title">Unique</h3>
+          <p id="info-unique-desc">Never reuse passwords across different accounts. Each account needs its own strong
+            password.</p>
         </div>
       </div>
     </div>
-  </main>
-  <footer>
-    <div class="footer-controls">
-      <div class="lang-selector">
-        <button id="lang-trigger" class="lang-trigger" aria-label="Select language">
-          <i class="fas fa-globe"></i>
-          <span id="current-lang">English</span>
-          <i class="fas fa-chevron-down"></i>
-        </button>
-        <div id="lang-dropdown" class="lang-dropdown" hidden>
-          <button class="lang-option" data-lang="en">English</button>
-          <button class="lang-option" data-lang="es">Español</button>
-          <button class="lang-option" data-lang="fr">Français</button>
-          <button class="lang-option" data-lang="tr">Türkçe</button>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-controls">
+        <div class="lang-selector">
+          <button id="lang-trigger" class="lang-trigger" aria-label="Select language">
+            <i class="fas fa-globe"></i>
+            <span id="current-lang">English</span>
+            <i class="fas fa-chevron-up"></i>
+          </button>
+          <div id="lang-dropdown" class="lang-dropdown" hidden>
+            <button class="lang-option active" data-lang="en">English</button>
+            <button class="lang-option" data-lang="es">Español</button>
+            <button class="lang-option" data-lang="fr">Français</button>
+            <button class="lang-option" data-lang="tr">Türkçe</button>
+          </div>
         </div>
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub repository">
+          <i class="fab fa-github" aria-hidden="true"></i>
+        </a>
       </div>
-      <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub repository">
-        <i class="fab fa-github" aria-hidden="true"></i>
-      </a>
+      <p class="footer-copy">© 2026 PwdGen. All passwords generated locally.</p>
     </div>
   </footer>
+
   <div class="toast" id="toast">Copied!</div>
+
   <script>
     // --- i18n translations ---
     const translations = {
       en: {
         title: "Password Generator",
+        subtitle: "Generate strong, unique passwords instantly. Your passwords are created locally and never stored.",
+        statusText: "Secure & Private",
         length: "Length",
         includeLower: "Lowercase",
         includeUpper: "Uppercase",
         includeNumbers: "Numbers",
         includeSymbols: "Symbols",
-        excludeChars: "Exclude these characters",
         strength: "Strength",
         weak: "Weak",
         medium: "Medium",
@@ -1069,27 +1104,28 @@
         copyAria: "Copy password",
         regenerateAria: "Regenerate password",
         password: "Generated password",
-        language: "Language",
-        passwordsGenerated: "Passwords generated:",
-        lastGenerated: "Last generated:",
-        strongPasswordTitle: "What makes a strong password?",
+        language: "English",
+        passwordsGenerated: "Generated:",
+        lastGenerated: "Last:",
+        infoTitle: "What makes a strong password?",
         long: "Long",
         longDesc: "Use at least 12 characters. Longer passwords are exponentially harder to crack.",
         complex: "Complex",
         complexDesc: "Mix uppercase and lowercase letters, numbers, and symbols for maximum security.",
         unique: "Unique",
         uniqueDesc: "Never reuse passwords across different accounts. Each account needs its own strong password.",
-        copied: "Password copied to clipboard!",
+        copied: "Password copied!",
         generated: "New password generated!"
       },
       es: {
         title: "Generador de Contraseñas",
+        subtitle: "Genera contraseñas fuertes y únicas al instante. Tus contraseñas se crean localmente.",
+        statusText: "Seguro y Privado",
         length: "Longitud",
         includeLower: "Minúsculas",
         includeUpper: "Mayúsculas",
         includeNumbers: "Números",
         includeSymbols: "Símbolos",
-        excludeChars: "Excluir estos caracteres",
         strength: "Fortaleza",
         weak: "Débil",
         medium: "Media",
@@ -1098,27 +1134,28 @@
         copyAria: "Copiar contraseña",
         regenerateAria: "Regenerar contraseña",
         password: "Contraseña generada",
-        language: "Idioma",
-        passwordsGenerated: "Contraseñas generadas:",
-        lastGenerated: "Última generación:",
-        strongPasswordTitle: "¿Qué hace una contraseña fuerte?",
+        language: "Español",
+        passwordsGenerated: "Generadas:",
+        lastGenerated: "Última:",
+        infoTitle: "¿Qué hace una contraseña fuerte?",
         long: "Larga",
-        longDesc: "Usa al menos 12 caracteres. Las contraseñas más largas son exponencialmente más difíciles de descifrar.",
+        longDesc: "Usa al menos 12 caracteres. Las contraseñas más largas son más difíciles de descifrar.",
         complex: "Compleja",
-        complexDesc: "Combina letras mayúsculas y minúsculas, números y símbolos para máxima seguridad.",
+        complexDesc: "Combina mayúsculas, minúsculas, números y símbolos para máxima seguridad.",
         unique: "Única",
-        uniqueDesc: "Nunca reutilices contraseñas en diferentes cuentas. Cada cuenta necesita su propia contraseña fuerte.",
-        copied: "¡Contraseña copiada al portapapeles!",
+        uniqueDesc: "Nunca reutilices contraseñas. Cada cuenta necesita su propia contraseña fuerte.",
+        copied: "¡Contraseña copiada!",
         generated: "¡Nueva contraseña generada!"
       },
       fr: {
         title: "Générateur de Mot de Passe",
+        subtitle: "Générez des mots de passe forts et uniques instantanément. Créés localement.",
+        statusText: "Sécurisé et Privé",
         length: "Longueur",
         includeLower: "Minuscules",
         includeUpper: "Majuscules",
         includeNumbers: "Chiffres",
         includeSymbols: "Symboles",
-        excludeChars: "Exclure ces caractères",
         strength: "Robustesse",
         weak: "Faible",
         medium: "Moyenne",
@@ -1127,27 +1164,28 @@
         copyAria: "Copier le mot de passe",
         regenerateAria: "Régénérer le mot de passe",
         password: "Mot de passe généré",
-        language: "Langue",
-        passwordsGenerated: "Mots de passe générés :",
-        lastGenerated: "Dernière génération :",
-        strongPasswordTitle: "Qu'est-ce qu'un mot de passe fort ?",
+        language: "Français",
+        passwordsGenerated: "Générés:",
+        lastGenerated: "Dernier:",
+        infoTitle: "Qu'est-ce qu'un mot de passe fort?",
         long: "Long",
-        longDesc: "Utilisez au moins 12 caractères. Les mots de passe plus longs sont exponentiellement plus difficiles à craquer.",
+        longDesc: "Utilisez au moins 12 caractères. Plus c'est long, plus c'est difficile à craquer.",
         complex: "Complexe",
-        complexDesc: "Mélangez majuscules et minuscules, chiffres et symboles pour une sécurité maximale.",
+        complexDesc: "Mélangez majuscules, minuscules, chiffres et symboles pour une sécurité maximale.",
         unique: "Unique",
-        uniqueDesc: "Ne réutilisez jamais les mots de passe sur différents comptes. Chaque compte a besoin de son propre mot de passe fort.",
-        copied: "Mot de passe copié dans le presse-papiers !",
-        generated: "Nouveau mot de passe généré !"
+        uniqueDesc: "Ne réutilisez jamais les mots de passe. Chaque compte a besoin de son propre mot de passe.",
+        copied: "Mot de passe copié!",
+        generated: "Nouveau mot de passe généré!"
       },
       tr: {
         title: "Şifre Oluşturucu",
+        subtitle: "Güçlü ve benzersiz şifreler anında oluşturun. Şifreleriniz yerel olarak oluşturulur.",
+        statusText: "Güvenli ve Gizli",
         length: "Uzunluk",
         includeLower: "Küçük Harf",
         includeUpper: "Büyük Harf",
         includeNumbers: "Rakamlar",
         includeSymbols: "Semboller",
-        excludeChars: "Bu karakterleri hariç tut",
         strength: "Güç",
         weak: "Zayıf",
         medium: "Orta",
@@ -1156,172 +1194,52 @@
         copyAria: "Şifreyi kopyala",
         regenerateAria: "Şifreyi yeniden oluştur",
         password: "Oluşturulan şifre",
-        language: "Dil",
-        passwordsGenerated: "Oluşturulan şifre sayısı:",
-        lastGenerated: "Son oluşturulma:",
-        strongPasswordTitle: "Bir şifreyi ne güçlü yapar?",
+        language: "Türkçe",
+        passwordsGenerated: "Oluşturulan:",
+        lastGenerated: "Son:",
+        infoTitle: "Güçlü bir şifre ne yapar?",
         long: "Uzun",
-        longDesc: "En az 12 karakter kullanın. Daha uzun şifreler kırılması üstel olarak daha zordur.",
+        longDesc: "En az 12 karakter kullanın. Uzun şifreler kırılması çok daha zordur.",
         complex: "Karmaşık",
-        complexDesc: "Maksimum güvenlik için büyük ve küçük harfleri, rakamları ve sembolleri karıştırın.",
+        complexDesc: "Büyük-küçük harf, rakam ve sembolleri karıştırarak maksimum güvenlik sağlayın.",
         unique: "Benzersiz",
-        uniqueDesc: "Farklı hesaplarda şifreleri asla yeniden kullanmayın. Her hesabın kendi güçlü şifresine ihtiyacı vardır.",
-        copied: "Şifre panoya kopyalandı!",
+        uniqueDesc: "Şifreleri asla yeniden kullanmayın. Her hesabın kendi güçlü şifresine ihtiyacı vardır.",
+        copied: "Şifre kopyalandı!",
         generated: "Yeni şifre oluşturuldu!"
       }
     };
 
-    // --- DOM elements ---
-    const $ = id => document.getElementById(id);
-    const passwordEl = $("password");
-    const copyBtn = $("copy-btn");
-    const regenerateBtn = $("regenerate-btn");
-    const lengthSlider = $("length-slider");
-    const lengthNumber = $("length-number");
-    const lowercaseEl = $("lowercase");
-    const uppercaseEl = $("uppercase");
-    const numbersEl = $("numbers");
-    const symbolsEl = $("symbols");
-    const strengthBar = $("strength-bar");
-    const strengthLabel = $("strength-label");
-    const counterEl = $("counter");
-    const lastTimeEl = $("last-time");
-    const langTrigger = $("lang-trigger");
-    const langDropdown = $("lang-dropdown");
-    const currentLangEl = $("current-lang");
-    const titleEl = $("title");
-    const lengthLabel = $("length-label");
-    const placeholderFallback = $("password-placeholder-fallback");
-    const passwordGroup = document.querySelector('.password-group');
-    const toast = $("toast");
+    // --- Cached DOM elements ---
+    const elements = {
+      password: document.getElementById("password"),
+      copyBtn: document.getElementById("copy-btn"),
+      regenerateBtn: document.getElementById("regenerate-btn"),
+      lengthSlider: document.getElementById("length-slider"),
+      lengthNumber: document.getElementById("length-number"),
+      lowercase: document.getElementById("lowercase"),
+      uppercase: document.getElementById("uppercase"),
+      numbers: document.getElementById("numbers"),
+      symbols: document.getElementById("symbols"),
+      strengthBar: document.getElementById("strength-bar"),
+      strengthLabel: document.getElementById("strength-label"),
+      counter: document.getElementById("counter"),
+      lastTime: document.getElementById("last-time"),
+      langTrigger: document.getElementById("lang-trigger"),
+      langDropdown: document.getElementById("lang-dropdown"),
+      currentLang: document.getElementById("current-lang"),
+      title: document.getElementById("title"),
+      subtitle: document.getElementById("subtitle"),
+      statusText: document.getElementById("status-text"),
+      lengthLabel: document.getElementById("length-label"),
+      placeholderFallback: document.getElementById("password-placeholder-fallback"),
+      passwordGroup: document.querySelector('.password-group'),
+      toast: document.getElementById("toast")
+    };
 
     // --- State ---
     let passwordCount = 0;
     let lastGenerated = null;
     let currentLang = localStorage.getItem('pwdgen-lang') || 'en';
-    let copyTimeout = null;
-    let isInitialized = false;
-
-    async function fetchStats() {
-      try {
-        const response = await fetch('/api/stats');
-        if (!response.ok) throw new Error('Failed to fetch stats');
-        const data = await response.json();
-        if (data) {
-          passwordCount = data.count || 0;
-          lastGenerated = data.lastGenerated;
-          updateStatsDisplay();
-        }
-      } catch (error) {
-        console.error('Error fetching stats:', error);
-      }
-    }
-
-    function updateStatsDisplay() {
-      const counterEl = document.getElementById('counter');
-      const lastTimeEl = document.getElementById('last-time');
-      
-      if (counterEl) {
-        counterEl.textContent = passwordCount;
-      }
-      
-      if (lastTimeEl) {
-        lastTimeEl.textContent = lastGenerated || "—";
-      }
-    }
-
-    async function updateStats() {
-      try {
-        const response = await fetch('/api/stats', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
-        
-        if (!response.ok) throw new Error('Failed to update stats');
-        const data = await response.json();
-        if (data) {
-          passwordCount = data.count || 0;
-          lastGenerated = data.lastGenerated;
-          updateStatsDisplay();
-        }
-      } catch (error) {
-        console.error('Error updating stats:', error);
-      }
-    }
-
-    function doGenerate() {
-      const passwordGroup = document.querySelector('.password-group');
-      passwordGroup.classList.add('generating');
-      
-      const length = parseInt(lengthSlider.value, 10);
-      const opts = getOptions();
-      if (!opts.lower && !opts.upper && !opts.number && !opts.symbol) {
-        showNoOptionsState();
-      } else {
-        passwordEl.value = generatePassword(length, opts);
-        passwordEl.placeholder = '';
-        if (placeholderFallback) {
-          placeholderFallback.style.display = 'none';
-        }
-        if (passwordGroup) {
-          passwordGroup.classList.remove('fallback-active');
-        }
-        updateStrengthMeter(passwordEl.value, opts);
-        updateStats(); // This will increment the server-side counter
-        updateCopyButton();
-        attachCopyHandler();
-      }
-      
-      setTimeout(() => {
-        passwordGroup.classList.remove('generating');
-      }, 300);
-    }
-
-    // --- User preferences ---
-    const defaultPreferences = {
-      length: 16,
-      options: {
-        lower: true,
-        upper: true,
-        number: true,
-        symbol: true
-      }
-    };
-
-    function savePreferences() {
-      const preferences = {
-        length: parseInt(lengthSlider.value, 10),
-        options: {
-          lower: lowercaseEl.getAttribute('aria-pressed') === 'true',
-          upper: uppercaseEl.getAttribute('aria-pressed') === 'true',
-          number: numbersEl.getAttribute('aria-pressed') === 'true',
-          symbol: symbolsEl.getAttribute('aria-pressed') === 'true'
-        }
-      };
-      localStorage.setItem('pwdgen-preferences', JSON.stringify(preferences));
-    }
-
-    function loadPreferences() {
-      try {
-        const saved = localStorage.getItem('pwdgen-preferences');
-        if (saved) {
-          const preferences = JSON.parse(saved);
-          // Set length
-          syncLengthInputs(preferences.length);
-          // Set options
-          lowercaseEl.setAttribute('aria-pressed', preferences.options.lower);
-          uppercaseEl.setAttribute('aria-pressed', preferences.options.upper);
-          numbersEl.setAttribute('aria-pressed', preferences.options.number);
-          symbolsEl.setAttribute('aria-pressed', preferences.options.symbol);
-          return true;
-        }
-      } catch (e) {
-        console.warn('Failed to load preferences:', e);
-      }
-      return false;
-    }
 
     // --- Character sets ---
     const CHARS = {
@@ -1344,388 +1262,320 @@
     function generatePassword(length, opts) {
       const charset = getCharset(opts);
       if (!charset) return "";
+
       const charsetArr = charset.split("");
       const result = [];
       const randomBytes = new Uint32Array(length);
       window.crypto.getRandomValues(randomBytes);
+
       for (let i = 0; i < length; i++) {
-        const idx = randomBytes[i] % charsetArr.length;
-        result.push(charsetArr[idx]);
+        result.push(charsetArr[randomBytes[i] % charsetArr.length]);
       }
-      let required = [];
+
+      // Ensure at least one character from each selected set
+      const required = [];
       if (opts.lower) required.push(CHARS.lower);
       if (opts.upper) required.push(CHARS.upper);
       if (opts.number) required.push(CHARS.number);
       if (opts.symbol) required.push(CHARS.symbol);
-      for (let i = 0; i < required.length; i++) {
-        if (!required[i]) continue;
-        const set = required[i];
+
+      for (const set of required) {
         if (!result.some(c => set.includes(c))) {
-          let pos = Math.floor(Math.random() * length);
-          let char = set[Math.floor(Math.random() * set.length)];
-          result[pos] = char;
+          const pos = Math.floor(Math.random() * length);
+          result[pos] = set[Math.floor(Math.random() * set.length)];
         }
       }
+
       return result.join("");
     }
 
+    function getOptions() {
+      return {
+        lower: elements.lowercase.getAttribute('aria-pressed') === 'true',
+        upper: elements.uppercase.getAttribute('aria-pressed') === 'true',
+        number: elements.numbers.getAttribute('aria-pressed') === 'true',
+        symbol: elements.symbols.getAttribute('aria-pressed') === 'true'
+      };
+    }
+
+    function hasAnyOption(opts) {
+      return opts.lower || opts.upper || opts.number || opts.symbol;
+    }
+
     function estimateStrength(pw, opts) {
+      const t = translations[currentLang];
       const charset = getCharset(opts);
-      if (!pw || !charset) return {score: 0, label: translations[currentLang].weak, color: "var(--danger)"};
-      let entropy = Math.log2(charset.length) * pw.length;
-      if (entropy < 40) return {score: 1, label: translations[currentLang].weak, color: "var(--danger)"};
-      if (entropy < 60) return {score: 2, label: translations[currentLang].medium, color: "var(--warning)"};
-      if (entropy < 80) return {score: 3, label: translations[currentLang].strong, color: "var(--success)"};
-      return {score: 4, label: translations[currentLang].excellent, color: "var(--excellent)"};
+      if (!pw || !charset) return { score: 0, label: t.weak, color: "var(--danger)" };
+
+      const entropy = Math.log2(charset.length) * pw.length;
+      if (entropy < 40) return { score: 1, label: t.weak, color: "var(--danger)" };
+      if (entropy < 60) return { score: 2, label: t.medium, color: "var(--warning)" };
+      if (entropy < 80) return { score: 3, label: t.strong, color: "var(--success)" };
+      return { score: 4, label: t.excellent, color: "var(--excellent)" };
     }
 
     function updateStrengthMeter(pw, opts) {
-      const {score, label, color} = estimateStrength(pw, opts);
+      const { score, label, color } = estimateStrength(pw, opts);
       const widths = [0, 30, 55, 80, 100];
-      strengthBar.style.width = widths[score] + "%";
-      strengthBar.style.background = color;
-      strengthLabel.textContent = label;
-      strengthLabel.style.color = color;
-    }
-
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      // Clear any existing timeouts
-      if (toast.timeout) {
-        clearTimeout(toast.timeout);
-      }
-      // Reset the toast state
-      toast.classList.remove('show');
-      // Force a reflow
-      void toast.offsetWidth;
-      // Set the new message
-      toast.textContent = message;
-      // Show the toast
-      toast.classList.add('show');
-      // Set the timeout to hide it
-      toast.timeout = setTimeout(() => {
-        toast.classList.remove('show');
-        toast.timeout = null;
-      }, 2000);
-    }
-
-    function showCopySuccess() {
-      const copyBtn = document.getElementById('copy-btn');
-      copyBtn.classList.add('success');
-      copyBtn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i>';
-      showToast(translations[currentLang].copied);
-      setTimeout(() => {
-        copyBtn.classList.remove('success');
-        copyBtn.innerHTML = '<i class="fas fa-clipboard" aria-hidden="true"></i>';
-      }, 1500);
-    }
-
-    function handleRegenerate() {
-      const regenerateBtn = document.getElementById('regenerate-btn');
-      regenerateBtn.classList.add('loading');
-      doGenerate();
-      showToast(translations[currentLang].generated);
-      setTimeout(() => {
-        regenerateBtn.classList.remove('loading');
-      }, 600);
-    }
-
-    function syncLengthInputs(val) {
-      lengthSlider.value = val;
-      lengthNumber.value = val;
-    }
-
-    function getOptions() {
-      const opts = {
-        lower: lowercaseEl.getAttribute('aria-pressed') === 'true',
-        upper: uppercaseEl.getAttribute('aria-pressed') === 'true',
-        number: numbersEl.getAttribute('aria-pressed') === 'true',
-        symbol: symbolsEl.getAttribute('aria-pressed') === 'true'
-      };
-      return opts;
+      elements.strengthBar.style.width = widths[score] + "%";
+      elements.strengthBar.style.background = color;
+      elements.strengthLabel.textContent = label;
+      elements.strengthLabel.style.color = color;
     }
 
     function nowTimeString() {
-      const d = new Date();
-      return d.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     }
 
-    function updateI18n() {
-      const t = translations[currentLang];
-      
-      // Update main elements
-      titleEl.textContent = t.title;
-      lengthLabel.textContent = t.length;
-      strengthLabel.textContent = t.strength;
-      copyBtn.setAttribute("aria-label", t.copyAria);
-      document.getElementById('regenerate-btn').setAttribute("aria-label", t.regenerateAria);
-      passwordEl.setAttribute("aria-label", t.password);
-      currentLangEl.textContent = t.language;
-      
-      // Update stats labels
-      const passwordsGeneratedLabel = document.getElementById('passwords-generated-label');
-      const lastGeneratedLabel = document.getElementById('last-generated-label');
-      
-      if (passwordsGeneratedLabel) {
-        passwordsGeneratedLabel.textContent = t.passwordsGenerated;
-        console.log('Updated passwords generated label:', t.passwordsGenerated);
-      }
-      
-      if (lastGeneratedLabel) {
-        lastGeneratedLabel.textContent = t.lastGenerated;
-        console.log('Updated last generated label:', t.lastGenerated);
-      }
-      
-      // Update toggle buttons
-      const toggles = {
-        lowercase: t.includeLower,
-        uppercase: t.includeUpper,
-        numbers: t.includeNumbers,
-        symbols: t.includeSymbols
-      };
-      
-      Object.entries(toggles).forEach(([id, text]) => {
-        const btn = document.getElementById(id);
-        if (btn) {
-          const span = btn.querySelector('span');
-          if (span) span.textContent = text;
-        }
-      });
-      
-      // Update info panel
-      const infoPanel = document.querySelector('.info-panel');
-      if (infoPanel) {
-        infoPanel.querySelector('h2').textContent = t.strongPasswordTitle;
-        const cards = infoPanel.querySelectorAll('.info-card');
-        if (cards.length >= 3) {
-          cards[0].querySelector('h3').textContent = t.long;
-          cards[0].querySelector('p').textContent = t.longDesc;
-          cards[1].querySelector('h3').textContent = t.complex;
-          cards[1].querySelector('p').textContent = t.complexDesc;
-          cards[2].querySelector('h3').textContent = t.unique;
-          cards[2].querySelector('p').textContent = t.uniqueDesc;
-        }
-      }
-      
-      // Update strength meter if password exists
-      if (passwordEl.value) {
-        updateStrengthMeter(passwordEl.value, getOptions());
-      }
-    }
-
-    function showNoOptionsState() {
-      passwordEl.value = '';
-      passwordEl.placeholder = '';
-      if (placeholderFallback) {
-        placeholderFallback.style.display = 'block';
-        console.log('SHOW FALLBACK');
-      }
-      if (passwordGroup) {
-        passwordGroup.classList.add('fallback-active');
-      }
-      strengthBar.style.width = '0%';
-      strengthBar.style.background = 'var(--text-muted)';
-      strengthLabel.textContent = translations[currentLang].weak;
-      strengthLabel.style.color = 'var(--text-muted)';
-      updateCopyButton();
-    }
-
-    function calculateEntropy(password, opts) {
-      if (!password || !opts) return 0;
-      let charsetSize = 0;
-      if (opts.lower) charsetSize += 26;
-      if (opts.upper) charsetSize += 26;
-      if (opts.number) charsetSize += 10;
-      if (opts.symbol) charsetSize += 32; // Common symbols
-      return Math.log2(Math.pow(charsetSize, password.length));
-    }
-
-    function togglePasswordVisibility() {
-      const password = document.getElementById('password');
-      const visibilityBtn = document.getElementById('visibility-btn');
-      const icon = visibilityBtn.querySelector('i');
-      
-      password.classList.toggle('visible');
-      if (password.classList.contains('visible')) {
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-      } else {
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-      }
+    function showToast(message) {
+      if (elements.toast.timeout) clearTimeout(elements.toast.timeout);
+      elements.toast.classList.remove('show');
+      void elements.toast.offsetWidth;
+      elements.toast.textContent = message;
+      elements.toast.classList.add('show');
+      elements.toast.timeout = setTimeout(() => {
+        elements.toast.classList.remove('show');
+      }, 2000);
     }
 
     function updateCopyButton() {
-      const copyBtnCurrent = document.getElementById('copy-btn');
-      if (passwordEl.value && passwordEl.value.length > 0) {
-        copyBtnCurrent.disabled = false;
-        copyBtnCurrent.setAttribute('aria-disabled', 'false');
-        copyBtnCurrent.style.opacity = '1';
-        copyBtnCurrent.style.cursor = 'pointer';
-      } else {
-        copyBtnCurrent.disabled = true;
-        copyBtnCurrent.setAttribute('aria-disabled', 'true');
-        copyBtnCurrent.style.opacity = '0.5';
-        copyBtnCurrent.style.cursor = 'not-allowed';
+      const hasPassword = elements.password.value && elements.password.value.length > 0;
+      elements.copyBtn.disabled = !hasPassword;
+    }
+
+    function syncLengthInputs(val) {
+      elements.lengthSlider.value = val;
+      elements.lengthNumber.value = val;
+    }
+
+    // --- Stats ---
+    async function fetchStats() {
+      try {
+        const response = await fetch('/api/stats');
+        if (!response.ok) throw new Error('Failed to fetch stats');
+        const data = await response.json();
+        if (data && typeof data.count === 'number') {
+          passwordCount = data.count;
+          lastGenerated = data.lastGenerated;
+          updateStatsDisplay();
+        }
+      } catch (error) {
+        // Fallback to localStorage
+        const savedCount = localStorage.getItem('pwdgen-count');
+        if (savedCount) {
+          passwordCount = parseInt(savedCount, 10);
+          lastGenerated = localStorage.getItem('pwdgen-last');
+          updateStatsDisplay();
+        }
       }
     }
 
-    function attachCopyHandler() {
-      const copyBtnCurrent = document.getElementById('copy-btn');
-      copyBtnCurrent.onclick = async () => {
-        if (!passwordEl.value || copyBtnCurrent.disabled) return;
-        try {
-          await navigator.clipboard.writeText(passwordEl.value);
-          showCopySuccess();
-        } catch {
-          passwordEl.select();
-          document.execCommand('copy');
-          showCopySuccess();
-        }
+    function updateStatsDisplay() {
+      elements.counter.textContent = passwordCount;
+      elements.lastTime.textContent = lastGenerated || "—";
+    }
+
+    async function updateStats() {
+      updateStatsDisplay();
+      localStorage.setItem('pwdgen-count', passwordCount.toString());
+      localStorage.setItem('pwdgen-last', lastGenerated);
+
+      try {
+        await fetch('/api/stats', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ count: passwordCount, lastGenerated: lastGenerated })
+        });
+      } catch (error) {
+        // Silent fail, local storage is backup
+      }
+    }
+
+    // --- Preferences ---
+    function savePreferences() {
+      const preferences = {
+        length: parseInt(elements.lengthSlider.value, 10),
+        options: getOptions()
       };
+      localStorage.setItem('pwdgen-preferences', JSON.stringify(preferences));
+    }
+
+    function loadPreferences() {
+      try {
+        const saved = localStorage.getItem('pwdgen-preferences');
+        if (saved) {
+          const prefs = JSON.parse(saved);
+          syncLengthInputs(prefs.length);
+          elements.lowercase.setAttribute('aria-pressed', prefs.options.lower);
+          elements.uppercase.setAttribute('aria-pressed', prefs.options.upper);
+          elements.numbers.setAttribute('aria-pressed', prefs.options.number);
+          elements.symbols.setAttribute('aria-pressed', prefs.options.symbol);
+          return true;
+        }
+      } catch (e) {
+        console.warn('Failed to load preferences');
+      }
+      return false;
+    }
+
+    // --- Generation ---
+    function showNoOptionsState() {
+      elements.password.value = '';
+      elements.passwordGroup.classList.add('fallback-active');
+      elements.strengthBar.style.width = '0%';
+      elements.strengthLabel.textContent = translations[currentLang].weak;
+      elements.strengthLabel.style.color = 'var(--text-muted)';
+      updateCopyButton();
+    }
+
+    function doGenerate() {
+      const length = parseInt(elements.lengthSlider.value, 10);
+      const opts = getOptions();
+
+      if (!hasAnyOption(opts)) {
+        showNoOptionsState();
+        return;
+      }
+
+      elements.password.value = generatePassword(length, opts);
+      elements.passwordGroup.classList.remove('fallback-active');
+      updateStrengthMeter(elements.password.value, opts);
+      passwordCount++;
+      lastGenerated = nowTimeString();
+      updateStats();
+      updateCopyButton();
+    }
+
+    // --- i18n ---
+    function updateI18n() {
+      const t = translations[currentLang];
+
+      elements.title.textContent = t.title;
+      elements.subtitle.textContent = t.subtitle;
+      elements.statusText.textContent = t.statusText;
+      elements.lengthLabel.textContent = t.length;
+      elements.currentLang.textContent = t.language;
+      elements.copyBtn.setAttribute("aria-label", t.copyAria);
+      elements.regenerateBtn.setAttribute("aria-label", t.regenerateAria);
+
+      document.getElementById('passwords-generated-label').textContent = t.passwordsGenerated;
+      document.getElementById('last-generated-label').textContent = t.lastGenerated;
+
+      // Toggle buttons
+      elements.lowercase.querySelector('span').textContent = t.includeLower;
+      elements.uppercase.querySelector('span').textContent = t.includeUpper;
+      elements.numbers.querySelector('span').textContent = t.includeNumbers;
+      elements.symbols.querySelector('span').textContent = t.includeSymbols;
+
+      // Info panel
+      document.getElementById('info-title').textContent = t.infoTitle;
+      document.getElementById('info-long-title').textContent = t.long;
+      document.getElementById('info-long-desc').textContent = t.longDesc;
+      document.getElementById('info-complex-title').textContent = t.complex;
+      document.getElementById('info-complex-desc').textContent = t.complexDesc;
+      document.getElementById('info-unique-title').textContent = t.unique;
+      document.getElementById('info-unique-desc').textContent = t.uniqueDesc;
+
+      // Update strength if password exists
+      if (elements.password.value) {
+        updateStrengthMeter(elements.password.value, getOptions());
+      }
+
+      // Update language dropdown active state
+      document.querySelectorAll('.lang-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.lang === currentLang);
+      });
+    }
+
+    // --- Event Handlers ---
+    function handleCopy() {
+      if (!elements.password.value || elements.copyBtn.disabled) return;
+
+      navigator.clipboard.writeText(elements.password.value).then(() => {
+        elements.copyBtn.classList.add('success');
+        elements.copyBtn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i>';
+        showToast(translations[currentLang].copied);
+
+        setTimeout(() => {
+          elements.copyBtn.classList.remove('success');
+          elements.copyBtn.innerHTML = '<i class="fas fa-clipboard" aria-hidden="true"></i>';
+        }, 1500);
+      }).catch(() => {
+        elements.password.select();
+        document.execCommand('copy');
+        showToast(translations[currentLang].copied);
+      });
+    }
+
+    function handleRegenerate() {
+      doGenerate();
+      showToast(translations[currentLang].generated);
     }
 
     // --- Initialization ---
     async function init() {
-      if (isInitialized) return;
-      
-      // Load stats from server first
       await fetchStats();
-      
-      // Set up toggle buttons
-      const toggleButtons = [
-        { id: 'lowercase', el: lowercaseEl },
-        { id: 'uppercase', el: uppercaseEl },
-        { id: 'numbers', el: numbersEl },
-        { id: 'symbols', el: symbolsEl }
-      ];
 
-      // Load preferences or use defaults
       if (!loadPreferences()) {
-        // Set default length
-        syncLengthInputs(defaultPreferences.length);
-        
-        // Set default options
-        toggleButtons.forEach(({ id, el }) => {
-          if (el) {
-            const isActive = defaultPreferences.options[id.replace('s', '')];
-            el.setAttribute('aria-pressed', isActive);
-            el.classList.toggle('active', isActive);
-          }
-        });
+        syncLengthInputs(16);
       }
 
-      // Set up toggle button handlers
-      toggleButtons.forEach(({ id, el }) => {
-        if (!el) return;
-        
-        // Add click handler
-        el.addEventListener('click', () => {
-          const currentState = el.getAttribute('aria-pressed') === 'true';
-          const newState = !currentState;
-          
-          // Update button state
-          el.setAttribute('aria-pressed', newState);
-          el.classList.toggle('active', newState);
-          
-          // Generate new password if any option is selected
-          const opts = getOptions();
-          if (opts.lower || opts.upper || opts.number || opts.symbol) {
-            doGenerate();
-          } else {
-            showNoOptionsState();
-          }
-          
-          // Save preferences
+      // Toggle button handlers
+      [elements.lowercase, elements.uppercase, elements.numbers, elements.symbols].forEach(btn => {
+        btn.addEventListener('click', () => {
+          const newState = btn.getAttribute('aria-pressed') !== 'true';
+          btn.setAttribute('aria-pressed', newState);
+          doGenerate();
           savePreferences();
         });
       });
 
-      // Set up length controls
-      if (lengthSlider && lengthNumber) {
-        lengthSlider.addEventListener("input", e => {
-          syncLengthInputs(e.target.value);
-          const opts = getOptions();
-          if (opts.lower || opts.upper || opts.number || opts.symbol) {
-            doGenerate();
-          } else {
-            showNoOptionsState();
-          }
-          savePreferences();
-        });
-
-        lengthNumber.addEventListener("input", e => {
-          syncLengthInputs(e.target.value);
-          const opts = getOptions();
-          if (opts.lower || opts.upper || opts.number || opts.symbol) {
-            doGenerate();
-          } else {
-            showNoOptionsState();
-          }
-          savePreferences();
-        });
-      }
-
-      // Set up regenerate button
-      if (regenerateBtn) {
-        regenerateBtn.addEventListener('click', handleRegenerate);
-      }
-
-      // Set up copy button
-      if (copyBtn) {
-        copyBtn.addEventListener('click', async () => {
-          if (!passwordEl.value || copyBtn.disabled) return;
-          try {
-            await navigator.clipboard.writeText(passwordEl.value);
-            showCopySuccess();
-          } catch {
-            passwordEl.select();
-            document.execCommand('copy');
-            showCopySuccess();
-          }
-        });
-      }
-
-      // Update UI
-      updateI18n();
-      
-      // Generate initial password
-      const opts = getOptions();
-      if (opts.lower || opts.upper || opts.number || opts.symbol) {
+      // Length handlers
+      elements.lengthSlider.addEventListener('input', e => {
+        syncLengthInputs(e.target.value);
         doGenerate();
-      } else {
-        showNoOptionsState();
-      }
-      
-      updateCopyButton();
-      isInitialized = true;
+        savePreferences();
+      });
+
+      elements.lengthNumber.addEventListener('input', e => {
+        let val = parseInt(e.target.value, 10);
+        if (val < 8) val = 8;
+        if (val > 128) val = 128;
+        syncLengthInputs(val);
+        doGenerate();
+        savePreferences();
+      });
+
+      // Button handlers
+      elements.copyBtn.addEventListener('click', handleCopy);
+      elements.regenerateBtn.addEventListener('click', handleRegenerate);
+
+      // Language selector
+      elements.langTrigger.addEventListener('click', e => {
+        e.stopPropagation();
+        elements.langDropdown.hidden = !elements.langDropdown.hidden;
+      });
+
+      document.querySelectorAll('.lang-option').forEach(option => {
+        option.addEventListener('click', () => {
+          currentLang = option.dataset.lang;
+          localStorage.setItem('pwdgen-lang', currentLang);
+          elements.langDropdown.hidden = true;
+          updateI18n();
+        });
+      });
+
+      document.addEventListener('click', e => {
+        if (!elements.langTrigger.contains(e.target) && !elements.langDropdown.contains(e.target)) {
+          elements.langDropdown.hidden = true;
+        }
+      });
+
+      updateI18n();
+      doGenerate();
     }
 
-    // --- Event listeners ---
-    // Language selector
-    langTrigger.addEventListener('click', (e) => {
-      e.stopPropagation();
-      langDropdown.hidden = !langDropdown.hidden;
-    });
-
-    document.querySelectorAll('.lang-option').forEach(option => {
-      option.addEventListener('click', () => {
-        currentLang = option.dataset.lang;
-        currentLangEl.textContent = option.textContent;
-        langDropdown.hidden = true;
-        localStorage.setItem('pwdgen-lang', currentLang);
-        updateI18n();
-      });
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!langTrigger.contains(e.target) && !langDropdown.contains(e.target)) {
-        langDropdown.hidden = true;
-      }
-    });
-
-    // Start the app when DOM is ready
+    // Start the app
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', init);
     } else {
@@ -1733,4 +1583,5 @@
     }
   </script>
 </body>
-</html> 
+
+</html>
