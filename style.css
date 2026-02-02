@@ -859,6 +859,7 @@ kbd {
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-lg);
     backdrop-filter: blur(20px);
+    width: 100%;
 }
 
 .info-panel h2 {
@@ -868,9 +869,11 @@ kbd {
     font-weight: 700;
 }
 
+
+
 .info-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 2rem;
 }
 
