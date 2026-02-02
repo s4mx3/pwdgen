@@ -1480,31 +1480,39 @@
       return chars;
     }
 
+    // Securely get a random integer from 0 to max (exclusive)
+    function getSecureRandomInt(max) {
+      const array = new Uint32Array(1);
+      window.crypto.getRandomValues(array);
+      return array[0] % max; // Bias is negligible for max << 2^32
+    }
+
     function generatePassword(length, opts) {
       const charset = getCharset(opts);
       if (!charset) return "";
 
-      const charsetArr = charset.split("");
       const result = [];
-      const randomBytes = new Uint32Array(length);
-      window.crypto.getRandomValues(randomBytes);
+      const requiredSets = [];
+      if (opts.lower) requiredSets.push(CHARS.lower);
+      if (opts.upper) requiredSets.push(CHARS.upper);
+      if (opts.number) requiredSets.push(CHARS.number);
+      if (opts.symbol) requiredSets.push(CHARS.symbol);
 
-      for (let i = 0; i < length; i++) {
-        result.push(charsetArr[randomBytes[i] % charsetArr.length]);
+      // 1. Guarantee at least one char from each selected set
+      for (const set of requiredSets) {
+        result.push(set[getSecureRandomInt(set.length)]);
       }
 
-      // Ensure at least one character from each selected set
-      const required = [];
-      if (opts.lower) required.push(CHARS.lower);
-      if (opts.upper) required.push(CHARS.upper);
-      if (opts.number) required.push(CHARS.number);
-      if (opts.symbol) required.push(CHARS.symbol);
+      // 2. Fill the rest of the length
+      const remainingLength = length - result.length;
+      for (let i = 0; i < remainingLength; i++) {
+        result.push(charset[getSecureRandomInt(charset.length)]);
+      }
 
-      for (const set of required) {
-        if (!result.some(c => set.includes(c))) {
-          const pos = Math.floor(Math.random() * length);
-          result[pos] = set[Math.floor(Math.random() * set.length)];
-        }
+      // 3. Fisher-Yates Shuffle (Cryptographically Secure)
+      for (let i = result.length - 1; i > 0; i--) {
+        const j = getSecureRandomInt(i + 1);
+        [result[i], result[j]] = [result[j], result[i]];
       }
 
       return result.join("");
