@@ -1,12 +1,12 @@
 <div align="center">
   <br />
-  <h1>🔐 PwdGen - Premium Password Generator</h1>
+  <h1>🔐 pwdgen - Premium Password Generator</h1>
   <p>
     <strong>A modern, secure, and aesthetically pleasing password generator running entirely in your browser.</strong>
   </p>
 
   <p>
-    <a href="https://pwdgen-psi.vercel.app/">
+    <a href="https://pwdgen-chi.vercel.app">
       <img src="https://img.shields.io/badge/Live_Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
     </a>
   </p>
