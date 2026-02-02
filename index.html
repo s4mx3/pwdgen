@@ -649,20 +649,20 @@
     #length-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 22px;
-      height: 22px;
+      width: 16px;
+      height: 16px;
       background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
       border-radius: 50%;
       cursor: pointer;
-      margin-top: -7px;
-      box-shadow: 0 2px 10px var(--accent-glow), 0 0 0 3px rgba(255, 255, 255, 0.9);
+      margin-top: -4px;
+      box-shadow: 0 2px 8px var(--accent-glow), 0 0 0 2px rgba(255, 255, 255, 0.9);
       transition: all 0.2s ease;
       border: none;
     }
 
     #length-slider::-webkit-slider-thumb:hover {
-      transform: scale(1.15);
-      box-shadow: 0 4px 15px var(--accent-glow), 0 0 0 4px rgba(255, 255, 255, 1);
+      transform: scale(1.2);
+      box-shadow: 0 3px 12px var(--accent-glow), 0 0 0 3px rgba(255, 255, 255, 1);
     }
 
     #length-slider::-moz-range-track {
@@ -678,12 +678,12 @@
     }
 
     #length-slider::-moz-range-thumb {
-      width: 22px;
-      height: 22px;
+      width: 16px;
+      height: 16px;
       background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
       border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 2px 10px var(--accent-glow), 0 0 0 3px rgba(255, 255, 255, 0.9);
+      box-shadow: 0 2px 8px var(--accent-glow), 0 0 0 2px rgba(255, 255, 255, 0.9);
       border: none;
     }
 
@@ -1010,6 +1010,21 @@
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 1000;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .toast i {
+      font-size: 1rem;
+    }
+
+    .toast.toast-success i {
+      color: var(--success);
+    }
+
+    .toast.toast-info i {
+      color: var(--accent-primary);
     }
 
     .toast.show {
@@ -1084,11 +1099,6 @@
         <div class="brand-icon"><i class="fas fa-key"></i></div>
         <span class="brand-text">PwdGen</span>
       </a>
-      <div class="nav-controls">
-        <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub repository">
-          <i class="fab fa-github" aria-hidden="true"></i>
-        </a>
-      </div>
     </div>
   </nav>
 
@@ -1161,8 +1171,7 @@
           <span id="counter" class="stat-value">0</span>
         </span>
         <span class="stat-hint">
-          <i class="fas fa-keyboard" aria-hidden="true"></i>
-          <span>Press <kbd>Space</kbd> to regenerate</span>
+          <span id="space-hint">Press <kbd>Space</kbd> to regenerate</span>
         </span>
       </div>
     </div>
@@ -1204,7 +1213,7 @@
             <i class="fas fa-chevron-up"></i>
           </button>
           <div id="lang-dropdown" class="lang-dropdown" hidden>
-            <button class="lang-option active" data-lang="en">English</button>
+            <button class="lang-option" data-lang="en">English</button>
             <button class="lang-option" data-lang="es">Español</button>
             <button class="lang-option" data-lang="fr">Français</button>
             <button class="lang-option" data-lang="tr">Türkçe</button>
@@ -1241,8 +1250,8 @@
         regenerateAria: "Regenerate password",
         password: "Generated password",
         language: "English",
-        passwordsGenerated: "Generated:",
-        lastGenerated: "Last:",
+        passwordsCreated: "Passwords created:",
+        spaceHint: "Press <kbd>Space</kbd> to regenerate",
         infoTitle: "What makes a strong password?",
         long: "Long",
         longDesc: "Use at least 12 characters. Longer passwords are exponentially harder to crack.",
@@ -1271,8 +1280,8 @@
         regenerateAria: "Regenerar contraseña",
         password: "Contraseña generada",
         language: "Español",
-        passwordsGenerated: "Generadas:",
-        lastGenerated: "Última:",
+        passwordsCreated: "Contraseñas creadas:",
+        spaceHint: "Pulsa <kbd>Espacio</kbd> para regenerar",
         infoTitle: "¿Qué hace una contraseña fuerte?",
         long: "Larga",
         longDesc: "Usa al menos 12 caracteres. Las contraseñas más largas son más difíciles de descifrar.",
@@ -1301,8 +1310,8 @@
         regenerateAria: "Régénérer le mot de passe",
         password: "Mot de passe généré",
         language: "Français",
-        passwordsGenerated: "Générés:",
-        lastGenerated: "Dernier:",
+        passwordsCreated: "Mots de passe créés:",
+        spaceHint: "Appuyez sur <kbd>Espace</kbd> pour régénérer",
         infoTitle: "Qu'est-ce qu'un mot de passe fort?",
         long: "Long",
         longDesc: "Utilisez au moins 12 caractères. Plus c'est long, plus c'est difficile à craquer.",
@@ -1331,8 +1340,8 @@
         regenerateAria: "Şifreyi yeniden oluştur",
         password: "Oluşturulan şifre",
         language: "Türkçe",
-        passwordsGenerated: "Oluşturulan:",
-        lastGenerated: "Son:",
+        passwordsCreated: "Oluşturulan şifreler:",
+        spaceHint: "Yeniden oluşturmak için <kbd>Boşluk</kbd>'a basın",
         infoTitle: "Güçlü bir şifre ne yapar?",
         long: "Uzun",
         longDesc: "En az 12 karakter kullanın. Uzun şifreler kırılması çok daha zordur.",
@@ -1462,12 +1471,56 @@
       return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     }
 
-    function showToast(message) {
+    // --- Sound Effects ---
+    let audioContext = null;
+
+    function getAudioContext() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioContext;
+    }
+
+    function playSound(type) {
+      try {
+        const ctx = getAudioContext();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        if (type === 'success') {
+          // Pleasant success chime - two quick ascending notes
+          oscillator.frequency.setValueAtTime(800, ctx.currentTime);
+          oscillator.frequency.setValueAtTime(1200, ctx.currentTime + 0.08);
+          gainNode.gain.setValueAtTime(0.15, ctx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+          oscillator.start(ctx.currentTime);
+          oscillator.stop(ctx.currentTime + 0.2);
+        } else if (type === 'generate') {
+          // Subtle click/pop sound
+          oscillator.frequency.setValueAtTime(600, ctx.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.05);
+          gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+          oscillator.start(ctx.currentTime);
+          oscillator.stop(ctx.currentTime + 0.08);
+        }
+      } catch (e) {
+        // Audio not supported or blocked
+      }
+    }
+
+    function showToast(message, icon = '', type = 'info') {
       if (elements.toast.timeout) clearTimeout(elements.toast.timeout);
-      elements.toast.classList.remove('show');
+      elements.toast.classList.remove('show', 'toast-success', 'toast-info');
       void elements.toast.offsetWidth;
-      elements.toast.textContent = message;
-      elements.toast.classList.add('show');
+
+      const iconHtml = icon ? `<i class="${icon}" aria-hidden="true"></i>` : '';
+      elements.toast.innerHTML = iconHtml + `<span>${message}</span>`;
+      elements.toast.classList.add('show', `toast-${type}`);
+
       elements.toast.timeout = setTimeout(() => {
         elements.toast.classList.remove('show');
       }, 2000);
@@ -1602,14 +1655,15 @@
       elements.copyBtn.setAttribute("aria-label", t.copyAria);
       elements.regenerateBtn.setAttribute("aria-label", t.regenerateAria);
 
-      document.getElementById('passwords-generated-label').textContent = t.passwordsGenerated;
-      document.getElementById('last-generated-label').textContent = t.lastGenerated;
+      // Stats section
+      document.getElementById('passwords-generated-label').textContent = t.passwordsCreated;
+      document.getElementById('space-hint').innerHTML = t.spaceHint;
 
-      // Toggle buttons
-      elements.lowercase.querySelector('span').textContent = t.includeLower;
-      elements.uppercase.querySelector('span').textContent = t.includeUpper;
-      elements.numbers.querySelector('span').textContent = t.includeNumbers;
-      elements.symbols.querySelector('span').textContent = t.includeSymbols;
+      // Toggle buttons - get the last span (the label, not the icon)
+      elements.lowercase.querySelectorAll('span')[1].textContent = t.includeLower;
+      elements.uppercase.querySelectorAll('span')[1].textContent = t.includeUpper;
+      elements.numbers.querySelectorAll('span')[1].textContent = t.includeNumbers;
+      elements.symbols.querySelectorAll('span')[1].textContent = t.includeSymbols;
 
       // Info panel
       document.getElementById('info-title').textContent = t.infoTitle;
@@ -1631,14 +1685,14 @@
       });
     }
 
-    // --- Event Handlers ---
     function handleCopy() {
       if (!elements.password.value || elements.copyBtn.disabled) return;
 
       navigator.clipboard.writeText(elements.password.value).then(() => {
         elements.copyBtn.classList.add('success');
         elements.copyBtn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i>';
-        showToast(translations[currentLang].copied);
+        showToast(translations[currentLang].copied, 'fas fa-check-circle', 'success');
+        playSound('success');
 
         setTimeout(() => {
           elements.copyBtn.classList.remove('success');
@@ -1647,17 +1701,22 @@
       }).catch(() => {
         elements.password.select();
         document.execCommand('copy');
-        showToast(translations[currentLang].copied);
+        showToast(translations[currentLang].copied, 'fas fa-check-circle', 'success');
+        playSound('success');
       });
     }
 
     function handleRegenerate() {
+      const opts = getOptions();
+      if (!hasAnyOption(opts)) return; // Don't do anything if no options selected
+
       // Add spin animation
       elements.regenerateBtn.classList.add('spinning');
       setTimeout(() => elements.regenerateBtn.classList.remove('spinning'), 500);
 
       doGenerate();
-      showToast(translations[currentLang].generated);
+      showToast(translations[currentLang].generated, 'fas fa-sync-alt', 'info');
+      playSound('generate');
     }
 
     // --- Initialization ---
