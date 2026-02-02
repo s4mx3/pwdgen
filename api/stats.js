@@ -72,32 +72,16 @@ export default async function handler(req, res) {
     } 
     else if (req.method === 'POST') {
       console.log('Handling POST request...');
-      let currentStats = await getKV('pwdgen:stats');
-      console.log('Current stats before update:', currentStats);
       
-      if (!currentStats) {
-        console.log('No stats found, creating new stats...');
-        currentStats = {
-          count: 0,
-          lastGenerated: null
-        };
-      }
+      // Accept count and lastGenerated directly from client
+      const { count, lastGenerated } = req.body;
       
-      // Increment the count
-      const newCount = currentStats.count + 1;
-      const newTime = new Date().toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      });
-      
-      // Update stats
       const updatedStats = {
-        count: newCount,
-        lastGenerated: newTime
+        count: typeof count === 'number' ? count : 0,
+        lastGenerated: lastGenerated || null
       };
       
-      console.log('Updating stats to:', updatedStats);
+      console.log('Storing stats:', updatedStats);
       await setKV('pwdgen:stats', updatedStats);
       console.log('Stats updated successfully');
       
