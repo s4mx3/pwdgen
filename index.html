@@ -504,6 +504,11 @@
       box-shadow: 0 4px 20px var(--accent-glow);
     }
 
+    .btn-icon:focus-visible {
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 2px;
+    }
+
     .btn-icon.success {
       background: var(--success);
       color: #fff;
@@ -512,6 +517,20 @@
     .btn-icon:disabled {
       opacity: 0.4;
       cursor: not-allowed;
+    }
+
+    #regenerate-btn.spinning i {
+      animation: spin 0.5s ease-out;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     /* Toggle Buttons */
@@ -726,23 +745,64 @@
     .stats {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       gap: 1rem;
       padding: 1rem 1.25rem;
       background: rgba(0, 0, 0, 0.2);
       border-radius: var(--radius);
       border: 1.5px solid var(--glass-border);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
     }
 
-    .stats span {
+    .stat-item {
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
 
+    .stat-value {
+      font-weight: 700;
+      color: var(--accent-primary);
+      font-size: 1rem;
+    }
+
+    .stat-hint {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.7;
+      font-size: 0.8rem;
+    }
+
     .stats i {
       color: var(--accent-primary);
+    }
+
+    kbd {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--glass-border);
+      border-radius: 6px;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    /* Toggle Icon */
+    .toggle-icon {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.25rem 0.5rem;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      letter-spacing: -0.02em;
+    }
+
+    .toggle-btn[aria-pressed="true"] .toggle-icon {
+      background: rgba(255, 255, 255, 0.2);
     }
 
     /* Info Panel */
@@ -1064,19 +1124,19 @@
 
       <div class="toggle-group">
         <button type="button" class="toggle-btn" id="lowercase" aria-pressed="true">
-          <i class="fas fa-font" aria-hidden="true"></i>
+          <span class="toggle-icon">a-z</span>
           <span>Lowercase</span>
         </button>
         <button type="button" class="toggle-btn" id="uppercase" aria-pressed="true">
-          <i class="fas fa-font" aria-hidden="true"></i>
+          <span class="toggle-icon">A-Z</span>
           <span>Uppercase</span>
         </button>
         <button type="button" class="toggle-btn" id="numbers" aria-pressed="true">
-          <i class="fas fa-hashtag" aria-hidden="true"></i>
+          <span class="toggle-icon">0-9</span>
           <span>Numbers</span>
         </button>
         <button type="button" class="toggle-btn" id="symbols" aria-pressed="true">
-          <i class="fas fa-at" aria-hidden="true"></i>
+          <span class="toggle-icon">!@#</span>
           <span>Symbols</span>
         </button>
       </div>
@@ -1095,15 +1155,14 @@
       </div>
 
       <div class="stats">
-        <span>
-          <i class="fas fa-key" aria-hidden="true"></i>
-          <span id="passwords-generated-label">Generated:</span>
-          <span id="counter">0</span>
+        <span class="stat-item">
+          <i class="fas fa-shield-alt" aria-hidden="true"></i>
+          <span id="passwords-generated-label">Passwords created:</span>
+          <span id="counter" class="stat-value">0</span>
         </span>
-        <span>
-          <i class="fas fa-clock" aria-hidden="true"></i>
-          <span id="last-generated-label">Last:</span>
-          <span id="last-time">—</span>
+        <span class="stat-hint">
+          <i class="fas fa-keyboard" aria-hidden="true"></i>
+          <span>Press <kbd>Space</kbd> to regenerate</span>
         </span>
       </div>
     </div>
@@ -1300,7 +1359,6 @@
       strengthBar: document.getElementById("strength-bar"),
       strengthLabel: document.getElementById("strength-label"),
       counter: document.getElementById("counter"),
-      lastTime: document.getElementById("last-time"),
       langTrigger: document.getElementById("lang-trigger"),
       langDropdown: document.getElementById("lang-dropdown"),
       currentLang: document.getElementById("current-lang"),
@@ -1459,7 +1517,6 @@
 
     function updateStatsDisplay() {
       elements.counter.textContent = passwordCount;
-      elements.lastTime.textContent = lastGenerated || "—";
     }
 
     async function updateStats() {
@@ -1595,6 +1652,10 @@
     }
 
     function handleRegenerate() {
+      // Add spin animation
+      elements.regenerateBtn.classList.add('spinning');
+      setTimeout(() => elements.regenerateBtn.classList.remove('spinning'), 500);
+
       doGenerate();
       showToast(translations[currentLang].generated);
     }
@@ -1657,6 +1718,15 @@
       document.addEventListener('click', e => {
         if (!elements.langTrigger.contains(e.target) && !elements.langDropdown.contains(e.target)) {
           elements.langDropdown.hidden = true;
+        }
+      });
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', e => {
+        const isInputFocused = document.activeElement.tagName === 'INPUT';
+        if (e.code === 'Space' && !isInputFocused) {
+          e.preventDefault();
+          handleRegenerate();
         }
       });
 
