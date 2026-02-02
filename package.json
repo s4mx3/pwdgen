@@ -1,9 +1,36 @@
 {
   "name": "pwdgen",
   "version": "1.0.0",
-  "description": "Password Generator with shared stats",
+  "description": "A modern, secure, and aesthetically pleasing client-side password generator.",
+  "private": true,
+  "author": "s4mx3",
+  "license": "MIT",
+  "homepage": "https://pwdgen-chi.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/s4mx3/pwdgen.git"
+  },
+  "bugs": {
+    "url": "https://github.com/s4mx3/pwdgen/issues"
+  },
+  "keywords": [
+    "password-generator",
+    "security",
+    "privacy",
+    "web-crypto-api",
+    "glassmorphism",
+    "client-side",
+    "vanilla-js"
+  ],
   "main": "index.html",
+  "scripts": {
+    "start": "serve .",
+    "dev": "serve ."
+  },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
   }
-} 
+}
