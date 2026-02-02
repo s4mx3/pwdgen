@@ -263,7 +263,7 @@
     .hero {
       position: relative;
       z-index: 1;
-      padding: 80px 24px 40px;
+      padding: 60px 24px 40px;
       text-align: center;
     }
 
@@ -723,6 +723,7 @@
       background: rgba(255, 255, 255, 0.1);
       border-radius: 4px;
       overflow: hidden;
+      position: relative;
     }
 
     #strength-bar {
@@ -730,7 +731,35 @@
       width: 0%;
       background: var(--danger);
       border-radius: 4px;
-      transition: width 0.4s ease, background 0.4s ease;
+      transition: width 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    #strength-bar.glow-danger {
+      box-shadow:
+        0 0 10px 3px var(--danger),
+        0 0 20px 6px rgba(239, 68, 68, 0.5),
+        0 0 30px 10px rgba(239, 68, 68, 0.2);
+    }
+
+    #strength-bar.glow-warning {
+      box-shadow:
+        0 0 10px 3px var(--warning),
+        0 0 20px 6px rgba(245, 158, 11, 0.5),
+        0 0 30px 10px rgba(245, 158, 11, 0.2);
+    }
+
+    #strength-bar.glow-success {
+      box-shadow:
+        0 0 10px 3px var(--success),
+        0 0 20px 6px rgba(34, 197, 94, 0.5),
+        0 0 30px 10px rgba(34, 197, 94, 0.2);
+    }
+
+    #strength-bar.glow-excellent {
+      box-shadow:
+        0 0 12px 4px var(--excellent),
+        0 0 25px 8px rgba(139, 92, 246, 0.6),
+        0 0 40px 15px rgba(139, 92, 246, 0.3);
     }
 
     #strength-label {
@@ -739,6 +768,48 @@
       min-width: 80px;
       text-align: right;
       transition: color var(--transition);
+    }
+
+    /* Security Info */
+    .security-info {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .security-card {
+      flex: 1;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: var(--radius);
+      border: 1.5px solid var(--glass-border);
+      text-align: center;
+    }
+
+    .security-card-label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+    }
+
+    .security-card-value {
+      display: block;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+
+    .security-card-value.entropy {
+      color: var(--accent-primary);
+    }
+
+    .security-card-value.crack-time {
+      color: var(--success);
     }
 
     /* Stats */
@@ -1092,15 +1163,6 @@
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
 
-  <!-- Navigation -->
-  <nav class="nav">
-    <div class="nav-container">
-      <a href="/" class="brand">
-        <div class="brand-icon"><i class="fas fa-key"></i></div>
-        <span class="brand-text">PwdGen</span>
-      </a>
-    </div>
-  </nav>
 
   <!-- Hero Section -->
   <section class="hero">
@@ -1162,6 +1224,17 @@
           <div id="strength-bar"></div>
         </div>
         <span id="strength-label">Strength</span>
+      </div>
+
+      <div class="security-info">
+        <div class="security-card">
+          <span class="security-card-label">Entropy</span>
+          <span id="entropy-value" class="security-card-value entropy">0 bits</span>
+        </div>
+        <div class="security-card">
+          <span class="security-card-label">Time to crack</span>
+          <span id="crack-time" class="security-card-value crack-time">—</span>
+        </div>
       </div>
 
       <div class="stats">
@@ -1446,71 +1519,77 @@
       return opts.lower || opts.upper || opts.number || opts.symbol;
     }
 
+    function calculateEntropy(pw, opts) {
+      const charset = getCharset(opts);
+      if (!pw || !charset) return 0;
+      return Math.log2(charset.length) * pw.length;
+    }
+
+    function formatCrackTime(entropy) {
+      // Assume 10 billion guesses per second (modern GPU cluster)
+      const guessesPerSecond = 10e9;
+      const totalCombinations = Math.pow(2, entropy);
+      const seconds = totalCombinations / guessesPerSecond / 2; // Average is half
+
+      if (seconds < 1) return 'Less than a second';
+      if (seconds < 10) return 'A few seconds';
+      if (seconds < 60) return 'Under a minute';
+      if (seconds < 300) return 'A few minutes';
+      if (seconds < 3600) return 'Under an hour';
+      if (seconds < 86400) return 'Several hours';
+      if (seconds < 604800) return 'A few days';
+      if (seconds < 2592000) return 'A few weeks';
+      if (seconds < 31536000) return 'Several months';
+      if (seconds < 31536000 * 10) return 'A few years';
+      if (seconds < 31536000 * 100) return 'Decades';
+      if (seconds < 31536000 * 1000) return 'Centuries';
+      if (seconds < 31536000 * 1e6) return 'Millennia';
+      if (seconds < 31536000 * 1e9) return 'Millions of years';
+      return 'Eternity';
+    }
+
     function estimateStrength(pw, opts) {
       const t = translations[currentLang];
       const charset = getCharset(opts);
-      if (!pw || !charset) return { score: 0, label: t.weak, color: "var(--danger)" };
+      if (!pw || !charset) return { score: 0, label: t.weak, color: "var(--danger)", glow: "glow-danger" };
 
       const entropy = Math.log2(charset.length) * pw.length;
-      if (entropy < 40) return { score: 1, label: t.weak, color: "var(--danger)" };
-      if (entropy < 60) return { score: 2, label: t.medium, color: "var(--warning)" };
-      if (entropy < 80) return { score: 3, label: t.strong, color: "var(--success)" };
-      return { score: 4, label: t.excellent, color: "var(--excellent)" };
+      if (entropy < 40) return { score: 1, label: t.weak, color: "var(--danger)", glow: "glow-danger" };
+      if (entropy < 60) return { score: 2, label: t.medium, color: "var(--warning)", glow: "glow-warning" };
+      if (entropy < 80) return { score: 3, label: t.strong, color: "var(--success)", glow: "glow-success" };
+      return { score: 4, label: t.excellent, color: "var(--excellent)", glow: "glow-excellent" };
     }
 
     function updateStrengthMeter(pw, opts) {
-      const { score, label, color } = estimateStrength(pw, opts);
+      const { score, label, color, glow } = estimateStrength(pw, opts);
       const widths = [0, 30, 55, 80, 100];
+
+      // Update strength bar
       elements.strengthBar.style.width = widths[score] + "%";
       elements.strengthBar.style.background = color;
+      elements.strengthBar.className = glow;
       elements.strengthLabel.textContent = label;
       elements.strengthLabel.style.color = color;
-    }
 
-    function nowTimeString() {
-      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    }
+      // Update entropy display
+      const entropy = calculateEntropy(pw, opts);
+      document.getElementById('entropy-value').textContent = `${Math.round(entropy)} bits`;
 
-    // --- Sound Effects ---
-    let audioContext = null;
+      // Update crack time display
+      const crackTime = formatCrackTime(entropy);
+      const crackTimeEl = document.getElementById('crack-time');
+      crackTimeEl.textContent = crackTime;
 
-    function getAudioContext() {
-      if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      return audioContext;
-    }
-
-    function playSound(type) {
-      try {
-        const ctx = getAudioContext();
-        const oscillator = ctx.createOscillator();
-        const gainNode = ctx.createGain();
-
-        oscillator.connect(gainNode);
-        gainNode.connect(ctx.destination);
-
-        if (type === 'success') {
-          // Pleasant success chime - two quick ascending notes
-          oscillator.frequency.setValueAtTime(800, ctx.currentTime);
-          oscillator.frequency.setValueAtTime(1200, ctx.currentTime + 0.08);
-          gainNode.gain.setValueAtTime(0.15, ctx.currentTime);
-          gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
-          oscillator.start(ctx.currentTime);
-          oscillator.stop(ctx.currentTime + 0.2);
-        } else if (type === 'generate') {
-          // Subtle click/pop sound
-          oscillator.frequency.setValueAtTime(600, ctx.currentTime);
-          oscillator.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.05);
-          gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
-          gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
-          oscillator.start(ctx.currentTime);
-          oscillator.stop(ctx.currentTime + 0.08);
-        }
-      } catch (e) {
-        // Audio not supported or blocked
+      // Color code the crack time
+      if (entropy < 40) {
+        crackTimeEl.style.color = 'var(--danger)';
+      } else if (entropy < 60) {
+        crackTimeEl.style.color = 'var(--warning)';
+      } else {
+        crackTimeEl.style.color = 'var(--success)';
       }
     }
+
 
     function showToast(message, icon = '', type = 'info') {
       if (elements.toast.timeout) clearTimeout(elements.toast.timeout);
@@ -1692,7 +1771,6 @@
         elements.copyBtn.classList.add('success');
         elements.copyBtn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i>';
         showToast(translations[currentLang].copied, 'fas fa-check-circle', 'success');
-        playSound('success');
 
         setTimeout(() => {
           elements.copyBtn.classList.remove('success');
@@ -1702,7 +1780,6 @@
         elements.password.select();
         document.execCommand('copy');
         showToast(translations[currentLang].copied, 'fas fa-check-circle', 'success');
-        playSound('success');
       });
     }
 
@@ -1716,7 +1793,6 @@
 
       doGenerate();
       showToast(translations[currentLang].generated, 'fas fa-sync-alt', 'info');
-      playSound('generate');
     }
 
     // --- Initialization ---
