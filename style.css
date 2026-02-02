@@ -852,9 +852,9 @@ kbd {
 }
 
 .info-panel {
-    max-width: 800px;
+    max-width: 550px;
     margin: 0 auto;
-    padding: 3rem;
+    padding: 2rem;
     background: var(--bg-card);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-lg);
